@@ -6,9 +6,42 @@ import {
   FaUsers,
   FaUserTie,
 } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 const HRSidebar = ({ isExpanded, setIsExpanded }) => {
+  const location = useLocation();
+  const currentPath = location.pathname.toLowerCase(); // Normalize to lowercase for comparison
+
+  // Check if the current path belongs to a specific section
+  const isActiveRoute = (basePath) => {
+    const normalizedBasePath = basePath.toLowerCase();
+
+    // For dashboard, only active on exact match
+    if (normalizedBasePath === "/hrdashboard") {
+      return currentPath === "/hrdashboard";
+    }
+
+    // For employees section - handle both singular and plural forms
+    if (normalizedBasePath === "/hrdashboard/employees") {
+      return (
+        currentPath.startsWith("/hrdashboard/employee") ||
+        currentPath.startsWith("/hrdashboard/employees") ||
+        currentPath.startsWith("/hrdashboard/feedback")
+      );
+    }
+
+    // For managers section
+    if (normalizedBasePath === "/hrdashboard/managers") {
+      return (
+        currentPath.startsWith("/hrdashboard/manager") ||
+        currentPath.startsWith("/hrdashboard/managers")
+      );
+    }
+
+    // Default case
+    return currentPath.startsWith(normalizedBasePath);
+  };
+
   return (
     <div
       className={`fixed left-0 top-15 h-full bg-white text-black transition-all shadow-lg ${
@@ -27,57 +60,59 @@ const HRSidebar = ({ isExpanded, setIsExpanded }) => {
 
       {/* Navigation Links */}
       <nav className="flex flex-col gap-4 p-4">
-        <NavLink
-          to="/hrDashboard"
-          end
-          className={({ isActive }) =>
-            `flex items-center ${
-              isExpanded ? "gap-3 p-3" : "justify-center p-2"
-            } rounded-md transition font-medium ${
-              isActive
-                ? "bg-gradient-to-r from-teal-500 to-blue-600 text-white shadow-lg"
-                : "hover:bg-gray-200"
-            }`
-          }
-          title="Dashboard"
+        {/* Dashboard Link */}
+        <div
+          className={`flex items-center ${
+            isExpanded ? "gap-3 p-3" : "justify-center p-2"
+          } rounded-md transition font-medium ${
+            isActiveRoute("/hrDashboard")
+              ? "bg-gradient-to-r from-teal-500 to-blue-600 text-white shadow-lg"
+              : "hover:bg-gray-200"
+          }`}
         >
-          <FaTachometerAlt size={isExpanded ? 28 : 32} />
-          {isExpanded && <span>Dashboard</span>}
-        </NavLink>
+          <NavLink to="/hrDashboard" className="flex items-center w-full" end>
+            <FaTachometerAlt size={isExpanded ? 28 : 32} />
+            {isExpanded && <span className="ml-2">Dashboard</span>}
+          </NavLink>
+        </div>
 
-        <NavLink
-          to="/hrDashboard/Employees"
-          className={({ isActive }) =>
-            `flex items-center ${
-              isExpanded ? "gap-3 p-3" : "justify-center p-2"
-            } rounded-md transition font-medium ${
-              isActive
-                ? "bg-gradient-to-r from-teal-500 to-blue-600 text-white shadow-lg"
-                : "hover:bg-gray-200"
-            }`
-          }
-          title="Employees"
+        {/* Employees Link */}
+        <div
+          className={`flex items-center ${
+            isExpanded ? "gap-3 p-3" : "justify-center p-2"
+          } rounded-md transition font-medium ${
+            isActiveRoute("/hrDashboard/employees")
+              ? "bg-gradient-to-r from-teal-500 to-blue-600 text-white shadow-lg"
+              : "hover:bg-gray-200"
+          }`}
         >
-          <FaUsers size={isExpanded ? 28 : 32} />
-          {isExpanded && <span>Employees</span>}
-        </NavLink>
+          <NavLink
+            to="/hrDashboard/employees"
+            className="flex items-center w-full"
+          >
+            <FaUsers size={isExpanded ? 28 : 32} />
+            {isExpanded && <span className="ml-2">Employees</span>}
+          </NavLink>
+        </div>
 
-        <NavLink
-          to="/hrDashboard/Managers"
-          className={({ isActive }) =>
-            `flex items-center ${
-              isExpanded ? "gap-3 p-3" : "justify-center p-2"
-            } rounded-md transition font-medium ${
-              isActive
-                ? "bg-gradient-to-r from-teal-500 to-blue-600 text-white shadow-lg"
-                : "hover:bg-gray-200"
-            }`
-          }
-          title="Managers"
+        {/* Managers Link */}
+        <div
+          className={`flex items-center ${
+            isExpanded ? "gap-3 p-3" : "justify-center p-2"
+          } rounded-md transition font-medium ${
+            isActiveRoute("/hrDashboard/managers")
+              ? "bg-gradient-to-r from-teal-500 to-blue-600 text-white shadow-lg"
+              : "hover:bg-gray-200"
+          }`}
         >
-          <FaUserTie size={isExpanded ? 28 : 32} />
-          {isExpanded && <span>Managers</span>}
-        </NavLink>
+          <NavLink
+            to="/hrDashboard/managers"
+            className="flex items-center w-full"
+          >
+            <FaUserTie size={isExpanded ? 28 : 32} />
+            {isExpanded && <span className="ml-2">Managers</span>}
+          </NavLink>
+        </div>
       </nav>
     </div>
   );
