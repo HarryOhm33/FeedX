@@ -24,6 +24,9 @@ import ManagerFeedbackRequests from "./pages/manager/ManagerFeedBackReq";
 import Feedback from "./pages/hr/FeedBack";
 import EmployeeM from "./pages/manager/EmployeeM";
 import EmployeeDetailsM from "./pages/manager/EmployeeDetailsM";
+import Goals from "./pages/manager/Goals";
+import GoalE from "./pages/employee/GoalE";
+import ProfileSection from "./pages/ProfileSection";
 
 function App() {
   return (
@@ -59,6 +62,8 @@ function App() {
                 path="Feedback/:feedbackRequestId"
                 element={<Feedback />}
               />
+              <Route path="Profile" element={<ProfileSection />} />
+              <Route path="*" element={<NotFound />} />
             </Route>
           </Route>
 
@@ -68,12 +73,19 @@ function App() {
               <Route path="Feedbacks" element={<ManagerFeedbackRequests />} />
               <Route path="Employees" element={<EmployeeM />} />
               <Route path="employees/:id" element={<EmployeeDetailsM />} />
+              <Route path="Goals" element={<Goals />} />
+              <Route path="Profile" element={<ProfileSection />} />
+              <Route path="*" element={<NotFound />} />
             </Route>
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={["employee"]} />}>
             <Route path="/employeeDashboard/*" element={<EmployeeLayout />}>
               <Route index element={<EmployeeDashboard />} />
+              <Route path="Feedbacks" element={<FeedbackRequests />} />
+              <Route path="Goals" element={<GoalE />} />
+              <Route path="Profile" element={<ProfileSection />} />
+              <Route path="*" element={<NotFound />} />
             </Route>
           </Route>
           <Route path="*" element={<NotFound />} />

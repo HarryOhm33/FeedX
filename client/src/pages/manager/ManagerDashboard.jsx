@@ -34,6 +34,7 @@ const ManagerDashboard = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    console.log(user);
     const fetchDashboardData = async () => {
       try {
         const token = Cookies.get("markAuth");
@@ -69,7 +70,7 @@ const ManagerDashboard = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
         <div className="bg-red-50 p-6 rounded-lg max-w-md text-center">
           <h2 className="text-xl font-semibold text-red-600 mb-2">Error</h2>
           <p className="text-red-500">{error}</p>
@@ -92,16 +93,16 @@ const ManagerDashboard = () => {
   } = dashboardData.data;
   const { aiInsights } = dashboardData;
 
-  // Chart Data Configurations
+  // Chart Data Configurations with Aqua Gradient Theme
   const goalChartData = {
     labels: ["Completed", "Pending"],
     datasets: [
       {
         data: [goalsCompleted, goalsPending],
-        backgroundColor: ["#4ade80", "#f87171"],
-        borderColor: ["#22c55e", "#ef4444"],
+        backgroundColor: ["#00FFC2", "#00E0FF"],
+        borderColor: ["#00D1A9", "#00B8E0"],
         borderWidth: 1,
-        hoverBackgroundColor: ["#16a34a", "#dc2626"],
+        hoverBackgroundColor: ["#00E0B0", "#00C9FF"],
       },
     ],
   };
@@ -115,10 +116,10 @@ const ManagerDashboard = () => {
           feedbackStats.neutral,
           feedbackStats.negative,
         ],
-        backgroundColor: ["#4ade80", "#94a3b8", "#f87171"],
-        borderColor: ["#22c55e", "#64748b", "#ef4444"],
+        backgroundColor: ["#00FFC2", "#7DD3FC", "#00E0FF"],
+        borderColor: ["#00D1A9", "#60B5E8", "#00B8E0"],
         borderWidth: 1,
-        hoverBackgroundColor: ["#16a34a", "#475569", "#dc2626"],
+        hoverBackgroundColor: ["#00E0B0", "#6AC4FF", "#00C9FF"],
       },
     ],
   };
@@ -129,10 +130,10 @@ const ManagerDashboard = () => {
       {
         label: "Count",
         data: [totalEmployees, goalsAssigned],
-        backgroundColor: ["#60a5fa", "#818cf8"],
-        borderColor: ["#3b82f6", "#6366f1"],
+        backgroundColor: ["#00E0FF", "#00B4D8"],
+        borderColor: ["#00C9FF", "#0096C7"],
         borderWidth: 1,
-        hoverBackgroundColor: ["#2563eb", "#4f46e5"],
+        hoverBackgroundColor: ["#00C9FF", "#0096C7"],
         borderRadius: 6,
       },
     ],
@@ -155,9 +156,9 @@ const ManagerDashboard = () => {
         },
       },
       tooltip: {
-        backgroundColor: "rgba(15, 23, 42, 0.95)",
-        titleFont: { size: 14, weight: "bold" },
-        bodyFont: { size: 13 },
+        backgroundColor: "rgba(0, 180, 216, 0.95)",
+        titleFont: { size: 14, weight: "bold", color: "#fff" },
+        bodyFont: { size: 13, color: "#fff" },
         padding: 12,
         cornerRadius: 8,
         displayColors: true,
@@ -192,15 +193,15 @@ const ManagerDashboard = () => {
   };
 
   return (
-    <div className="p-4 md:p-8 ml-0 ml-[55px] min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-14">
+    <div className="p-4 md:p-8 ml-0 ml-[55px] min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 mt-14">
       <div className="max-w-7xl mx-auto">
         <header className="mb-8 flex justify-between items-start">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
+            <h1 className="text-3xl md:text-4xl font-bold text-cyan-800">
               Welcome, {user?.name} 👋
             </h1>
-            <p className="text-gray-500 mt-2">
-              Your performance dashboard and insights
+            <p className="text-cyan-600 mt-2">
+              Your team performance dashboard and insights
             </p>
           </div>
 
@@ -212,17 +213,17 @@ const ManagerDashboard = () => {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {/* Employees Managed Card */}
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
+          <div className="bg-white p-5 rounded-xl shadow-sm border border-cyan-100 hover:shadow-md transition-all">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-500">
+                <p className="text-sm font-medium text-cyan-600">
                   Employees Managed
                 </p>
-                <h3 className="text-2xl font-bold text-slate-800 mt-1">
+                <h3 className="text-2xl font-bold text-cyan-800 mt-1">
                   {totalEmployees}
                 </h3>
               </div>
-              <div className="p-3 rounded-lg bg-blue-50 text-blue-600">
+              <div className="p-3 rounded-lg bg-cyan-50 text-cyan-600">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"
@@ -242,17 +243,17 @@ const ManagerDashboard = () => {
           </div>
 
           {/* Goals Assigned Card */}
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
+          <div className="bg-white p-5 rounded-xl shadow-sm border border-cyan-100 hover:shadow-md transition-all">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-500">
+                <p className="text-sm font-medium text-cyan-600">
                   Goals Assigned
                 </p>
-                <h3 className="text-2xl font-bold text-slate-800 mt-1">
+                <h3 className="text-2xl font-bold text-cyan-800 mt-1">
                   {goalsAssigned}
                 </h3>
               </div>
-              <div className="p-3 rounded-lg bg-indigo-50 text-indigo-600">
+              <div className="p-3 rounded-lg bg-teal-50 text-teal-600">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"
@@ -272,17 +273,17 @@ const ManagerDashboard = () => {
           </div>
 
           {/* Goals Completed Card */}
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
+          <div className="bg-white p-5 rounded-xl shadow-sm border border-cyan-100 hover:shadow-md transition-all">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-500">
+                <p className="text-sm font-medium text-cyan-600">
                   Goals Completed
                 </p>
-                <h3 className="text-2xl font-bold text-slate-800 mt-1">
+                <h3 className="text-2xl font-bold text-cyan-800 mt-1">
                   {goalsCompleted}
                 </h3>
               </div>
-              <div className="p-3 rounded-lg bg-emerald-50 text-emerald-600">
+              <div className="p-3 rounded-lg bg-gradient-to-r from-cyan-50 to-teal-50 text-teal-600">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"
@@ -302,19 +303,19 @@ const ManagerDashboard = () => {
           </div>
 
           {/* Feedback Card */}
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
+          <div className="bg-white p-5 rounded-xl shadow-sm border border-cyan-100 hover:shadow-md transition-all">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-500">
+                <p className="text-sm font-medium text-cyan-600">
                   Total Feedback
                 </p>
-                <h3 className="text-2xl font-bold text-slate-800 mt-1">
+                <h3 className="text-2xl font-bold text-cyan-800 mt-1">
                   {feedbackStats.positive +
                     feedbackStats.neutral +
                     feedbackStats.negative}
                 </h3>
               </div>
-              <div className="p-3 rounded-lg bg-amber-50 text-amber-600">
+              <div className="p-3 rounded-lg bg-blue-50 text-blue-600">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"
@@ -337,12 +338,12 @@ const ManagerDashboard = () => {
         {/* Charts Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Team Overview Bar Chart */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-cyan-100 hover:shadow-md transition-all">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-slate-800">
+              <h2 className="text-lg font-semibold text-cyan-800">
                 Team Overview
               </h2>
-              <span className="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded-full">
+              <span className="text-xs px-2 py-1 bg-cyan-100 text-cyan-800 rounded-full">
                 Employees vs Goals
               </span>
             </div>
@@ -374,12 +375,12 @@ const ManagerDashboard = () => {
           </div>
 
           {/* Goals Doughnut Chart */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-cyan-100 hover:shadow-md transition-all">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-slate-800">
+              <h2 className="text-lg font-semibold text-cyan-800">
                 Goals Status
               </h2>
-              <span className="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded-full">
+              <span className="text-xs px-2 py-1 bg-cyan-100 text-cyan-800 rounded-full">
                 Completion Rate
               </span>
             </div>
@@ -387,25 +388,25 @@ const ManagerDashboard = () => {
               <Doughnut data={goalChartData} options={chartOptions} />
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-slate-700">
+                  <p className="text-2xl font-bold text-cyan-700">
                     {goalsAssigned > 0
                       ? Math.round((goalsCompleted / goalsAssigned) * 100)
                       : 0}
                     %
                   </p>
-                  <p className="text-xs text-slate-500">Completion</p>
+                  <p className="text-xs text-cyan-500">Completion</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Feedback Pie Chart */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-cyan-100 hover:shadow-md transition-all">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-slate-800">
+              <h2 className="text-lg font-semibold text-cyan-800">
                 Feedback Sentiment
               </h2>
-              <span className="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded-full">
+              <span className="text-xs px-2 py-1 bg-cyan-100 text-cyan-800 rounded-full">
                 Positive/Neutral/Negative
               </span>
             </div>
@@ -419,20 +420,20 @@ const ManagerDashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Top Performer Card */}
           {topPerformer && (
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-cyan-100 hover:shadow-md transition-all">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-slate-800">
+                <h2 className="text-lg font-semibold text-cyan-800">
                   Top Performer
                 </h2>
-                <span className="text-xs px-2 py-1 bg-amber-100 text-amber-800 rounded-full">
+                <span className="text-xs px-2 py-1 bg-gradient-to-r from-cyan-100 to-teal-100 text-cyan-800 rounded-full">
                   Employee of the month
                 </span>
               </div>
               <div className="flex items-center space-x-4">
-                <div className="p-3 bg-gradient-to-br from-amber-100 to-amber-50 rounded-lg">
+                <div className="p-3 bg-gradient-to-br from-cyan-100 to-teal-100 rounded-lg">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-10 w-10 text-amber-500"
+                    className="h-10 w-10 text-cyan-500"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -446,17 +447,17 @@ const ManagerDashboard = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-medium text-slate-800">
+                  <h3 className="font-medium text-cyan-800">
                     {topPerformer.name}
                   </h3>
-                  <p className="text-sm text-slate-500 mb-2">
+                  <p className="text-sm text-cyan-600 mb-2">
                     Highest goal completion rate
                   </p>
                   <div className="flex items-center space-x-2">
-                    <span className="px-2 py-1 bg-emerald-50 text-emerald-700 text-xs rounded-full">
+                    <span className="px-2 py-1 bg-cyan-50 text-cyan-700 text-xs rounded-full">
                       {topPerformer.completed} goals completed
                     </span>
-                    <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-full">
+                    <span className="px-2 py-1 bg-teal-50 text-teal-700 text-xs rounded-full">
                       {goalsAssigned > 0
                         ? Math.round(
                             (topPerformer.completed / goalsAssigned) * 100
@@ -471,17 +472,17 @@ const ManagerDashboard = () => {
           )}
 
           {/* AI Insights Card */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-cyan-100 hover:shadow-md transition-all">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-slate-800">
+              <h2 className="text-lg font-semibold text-cyan-800">
                 AI Insights
               </h2>
-              <span className="text-xs px-2 py-1 bg-purple-100 text-purple-800 rounded-full">
+              <span className="text-xs px-2 py-1 bg-gradient-to-r from-cyan-100 to-blue-100 text-cyan-800 rounded-full">
                 Powered by AI
               </span>
             </div>
-            <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
-              <p className="text-slate-700 leading-relaxed">{aiInsights}</p>
+            <div className="bg-cyan-50 p-4 rounded-lg border border-cyan-200">
+              <p className="text-cyan-700 leading-relaxed">{aiInsights}</p>
             </div>
           </div>
         </div>

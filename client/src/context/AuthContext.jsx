@@ -10,7 +10,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [email, setEmail] = useState(""); // ✅ Store email for OTP verification
+  const [email, setEmail] = useState(""); // Store email for OTP-related actions
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
         axios
           .post(
             "http://localhost:8001/api/auth/verify-session",
-            {}, // POST requires a body, even if empty
+            {},
             {
               headers: { Authorization: `Bearer ${token}` },
               withCredentials: true,
@@ -43,30 +43,28 @@ export const AuthProvider = ({ children }) => {
     }, 500);
   }, [navigate]);
 
-  // ✅ Signup Function
+  // Signup Function
   const signup = async ({ name, email, password, organisation }, isNewOrg) => {
     try {
       const signupData = {
         name,
         email,
         password,
-        ...(isNewOrg ? { organisation } : { organisationId: organisation }), // ✅ Send either organisation name or organisationId
+        ...(isNewOrg ? { organisation } : { organisationId: organisation }),
       };
 
       const res = await axios.post(
         "http://localhost:8001/api/auth/signup",
         signupData,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
 
       if (
         res.data.message === "OTP sent to email. Verify to complete signup."
       ) {
-        setEmail(email); // ✅ Store email for OTP verification
+        setEmail(email); // Store email for OTP verification and resend
         toast.success(res.data.message);
-        navigate("/verify-otp"); // ✅ Redirect to OTP verification page
+        navigate("/verify-otp");
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Signup failed ❌");
@@ -74,7 +72,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ✅ Verify OTP Function
+  // Verify OTP Function
   const verifyOtp = async (otp) => {
     try {
       const res = await axios.post(
@@ -83,12 +81,27 @@ export const AuthProvider = ({ children }) => {
         { withCredentials: true }
       );
 
-      toast.success(res.data.message); // ✅ Shows "Signup successful. You can now log in."
-      navigate("/login"); // ✅ Redirect to login after OTP verification
+      toast.success(res.data.message);
+      navigate("/login");
     } catch (error) {
       toast.error(
         error.response?.data?.message || "OTP verification failed ❌"
       );
+      throw error;
+    }
+  };
+
+  // Resend OTP Function
+  const resendOtp = async () => {
+    try {
+      const res = await axios.post(
+        "http://localhost:8001/api/auth/resend-otp",
+        { email },
+        { withCredentials: true }
+      );
+      toast.success(res.data.message || "OTP resent successfully!");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to resend OTP ❌");
       throw error;
     }
   };
@@ -101,15 +114,12 @@ export const AuthProvider = ({ children }) => {
         { withCredentials: true }
       );
 
-      // Determine if we're in a secure (HTTPS) environment
       const isSecure = window.location.protocol === "https:";
-
-      // Set the cookie with js-cookie, expiring in 7 days
       Cookies.set("markAuth", res.data.token, {
-        expires: 7, // 7 days expiration
-        path: "/", // Available across the entire site
-        secure: isSecure, // Secure only for HTTPS, false for localhost (HTTP)
-        sameSite: "strict", // Prevents CSRF
+        expires: 7,
+        path: "/",
+        secure: isSecure,
+        sameSite: "strict",
       });
 
       setUser(res.data.user);
@@ -130,7 +140,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      const token = Cookies.get("markAuth"); // ✅ Get token before sending request
+      const token = Cookies.get("markAuth");
       await axios.post(
         "http://localhost:8001/api/auth/logout",
         {},
@@ -141,10 +151,9 @@ export const AuthProvider = ({ children }) => {
       );
 
       setUser(null);
-      Cookies.remove("markAuth"); // ✅ Remove token after logout
+      Cookies.remove("markAuth");
       toast.info("Logged out successfully! 👋");
-
-      navigate("/login"); // ✅ Redirect to login explicitly
+      navigate("/login");
     } catch (error) {
       toast.error("Logout failed ❌");
     }
@@ -152,7 +161,16 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, signup, verifyOtp, login, logout }}
+      value={{
+        user,
+        loading,
+        signup,
+        verifyOtp,
+        resendOtp,
+        login,
+        logout,
+        email,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -1,12 +1,79 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "./Button";
 
 const ContactUs = ({
-  formData,
-  formStatus,
-  handleInputChange,
-  handleSubmit,
+  formData: initialFormData,
+  formStatus: initialFormStatus,
+  handleInputChange: parentHandleInputChange,
 }) => {
+  const [formData, setFormData] = useState(
+    initialFormData || {
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
+    }
+  );
+  const [formStatus, setFormStatus] = useState(initialFormStatus || null);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Track submission state
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (parentHandleInputChange) parentHandleInputChange(e);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true); // Set to "Sending..."
+
+    const accessKey = import.meta.env.VITE_API_KEY;
+
+    const data = {
+      access_key: accessKey,
+      name: formData.name,
+      email: formData.email,
+      subject: formData.subject,
+      message: formData.message,
+    };
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setFormStatus({
+          success: true,
+          message: "Your message has been sent successfully!",
+        });
+        setFormData({ name: "", email: "", subject: "", message: "" });
+        // Keep "Sent" briefly visible before resetting (optional)
+        setTimeout(() => setIsSubmitting(false), 2000); // Reset after 2 seconds
+      } else {
+        setFormStatus({
+          success: false,
+          message:
+            result.message || "Failed to send message. Please try again.",
+        });
+        setIsSubmitting(false); // Reset immediately on failure
+      }
+    } catch (error) {
+      setFormStatus({
+        success: false,
+        message: "An error occurred. Please try again later.",
+      });
+      setIsSubmitting(false); // Reset on error
+    }
+  };
+
   return (
     <section className="py-16 px-4 bg-gray-100" id="contact">
       <div className="max-w-7xl mx-auto">
@@ -139,10 +206,9 @@ const ContactUs = ({
                       viewBox="0 0 24 24"
                       fill="currentColor"
                     >
-                      <path d="M7.635 10.909v2.619h4.335c-.173 1.125-1.31 3.295-4.331 3.295-2.604 0-4.731-2.16-4.731-4.823 0-2.662 2.122-4.822 4.728-4.822 1.485 0 2.479.633 3.045 1.178l2.073-1.994c-1.33-1.245-3.056-1.995-5.115-1.995C3.412 4.365 0 7.785 0 12s3.414 7.635 7.635 7.635c4.41 0 7.332-3.098 7.332-7.461 0-.501-.054-.885-.12-1.265H7.635zm16.365 0h-2.183V8.726h-2.183v2.183h-2.182v2.181h2.184v2.184h2.189v-2.184H24" />
+                      <path d="M7.635 10.909v2.619h4.335c-.173 1.125-1.31 3.295-4.331 3.295-2.604 0-4.731-2.16-4.731-4.823 0-2.662 2.122-4.822 4.728-4.822 1.485 0 2.479.633 3.045 1.178l2.073-1.994c-1.33-1.245-3.056-1.995-5.115-1.995C3.412 4.365 0 7.785 0 12s3.414 7.635 7.635 7.635c4.41 0 7.332-3.098 7 배경색을 바꿀 수 있는 버튼 추가하기.332-7.461 0-.501-.054-.885-.12-1.265H7.635zm16.365 0h-2.183V8.726h-2.183v2.183h-2.182v2.181h2.184v2.184h2.189v-2.184H24" />
                     </svg>
                   </a>
-
                   <a
                     href="#"
                     className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors"
@@ -167,6 +233,11 @@ const ContactUs = ({
                 Send Us a Message
               </h3>
               <form onSubmit={handleSubmit} className="space-y-6">
+                <input
+                  type="hidden"
+                  name="access_key"
+                  value="YOUR_WEB3FORMS_ACCESS_KEY"
+                />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="name" className="block text-gray-700 mb-2">
@@ -245,18 +316,23 @@ const ContactUs = ({
                 <div className="text-center">
                   <Button
                     type="submit"
+                    disabled={isSubmitting} // Disable during submission
                     className="w-full bg-gradient-to-r from-teal-400 to-blue-500 
               hover:from-teal-500 hover:to-blue-600 
               active:scale-95 
               text-white font-medium py-3 px-8 
               rounded-lg transition-all  
-              transform-gpu cursor-pointer"
+              transform-gpu cursor-pointer disabled:opacity-50"
                   >
-                    Send Message
+                    {isSubmitting
+                      ? formStatus?.success
+                        ? "Sent"
+                        : "Sending..."
+                      : "Send Message"}
                   </Button>
                 </div>
 
-                {formStatus && (
+                {formStatus && !isSubmitting && (
                   <div
                     className={`text-center p-4 rounded-lg ${
                       formStatus.success

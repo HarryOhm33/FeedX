@@ -31,15 +31,17 @@ module.exports.createUser = async (req, res) => {
       .json({ message: "Unauthorized: Only HR can create users" });
   }
 
-  // Check if the email is already registered
-  const existingUser =
-    (await Manager.findOne({ email })) || (await Employee.findOne({ email }));
+  // 🔒 Check if the email already exists across all user collections
+  // const existingUser =
+  //   (await HR.findOne({ email })) ||
+  //   (await Manager.findOne({ email })) ||
+  //   (await Employee.findOne({ email }));
 
-  if (existingUser) {
-    return res
-      .status(400)
-      .json({ message: "User with this email already exists" });
-  }
+  // if (existingUser) {
+  //   return res
+  //     .status(400)
+  //     .json({ message: "User with this email already exists" });
+  // }
 
   // ✅ Hash the password before saving
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -115,13 +117,13 @@ module.exports.getHrDashboardData = async (req, res) => {
     {
       $unwind: {
         path: "$employee",
-        preserveNullAndEmptyArrays: true, // Keep document if employee not found
+        preserveNullAndEmptyArrays: true,
       },
     },
     {
       $project: {
         employeeId: "$_id",
-        name: { $ifNull: ["$employee.name", "Unknown"] }, // Fallback to "Unknown"
+        name: { $ifNull: ["$employee.name", "Unknown"] },
         completed: 1,
       },
     },
@@ -129,23 +131,49 @@ module.exports.getHrDashboardData = async (req, res) => {
 
   const topPerformer = employeeGoalStats.length ? employeeGoalStats[0] : null;
 
+  const completedGoals = goals.filter((g) => g.status === "Completed").length;
+  const pendingGoals = goals.filter((g) => g.status !== "Completed").length;
+
   const data = {
     totalEmployees: employees,
     totalManagers: managers,
     goalStats: {
       total: goals.length,
-      completed: goals.filter((g) => g.status === "Completed").length,
-      pending: goals.filter((g) => g.status !== "Completed").length,
+      completed: completedGoals,
+      pending: pendingGoals,
     },
     feedbackStats: {
+      total: feedbacks.length,
       positive: feedbacks.filter((f) => f.rating >= 4).length,
       neutral: feedbacks.filter((f) => f.rating === 3).length,
       negative: feedbacks.filter((f) => f.rating <= 2).length,
     },
-    topPerformer: employeeGoalStats.length ? employeeGoalStats[0] : null,
+    topPerformer,
   };
 
-  const aiInsights = await analyzePerformance(data);
+  const prompt = `
+You are an AI assisting HR to assess company-wide performance. Here’s the summary:
+
+- Total Employees: ${employees}
+- Total Managers: ${managers}
+- Goals: ${
+    goals.length
+  } (Completed: ${completedGoals}, Pending: ${pendingGoals})
+- Feedbacks: ${feedbacks.length} (Positive: ${
+    data.feedbackStats.positive
+  }, Neutral: ${data.feedbackStats.neutral}, Negative: ${
+    data.feedbackStats.negative
+  })
+- Top Performer: ${
+    topPerformer
+      ? `${topPerformer.name} (${topPerformer.completed} goals completed)`
+      : "No data"
+  }
+
+Give a short, sharp insight (max 3 sentences, 30 words) with trends + advice for HR to improve performance tracking and engagement.
+`;
+
+  const aiInsights = await analyzePerformance(prompt);
 
   res.json({ data, aiInsights });
 };

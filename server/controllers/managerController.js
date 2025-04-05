@@ -14,7 +14,7 @@ module.exports.getManagerDashboardData = async (req, res) => {
   const goals = await Goal.find({ managerId }).populate("employeeId", "name");
 
   const feedbacks = await Feedback.find({
-    receiverId: { $in: employees },
+    receiverId: { $in: employees.map((e) => e._id) },
     receiverModel: "Employee",
   });
 
@@ -51,13 +51,15 @@ module.exports.getManagerDashboardData = async (req, res) => {
     );
     topPerformer = {
       _id: topPerformerId,
-      name:
-        topEmployeeGoal && topEmployeeGoal.employeeId
-          ? topEmployeeGoal.employeeId.name
-          : "Unknown",
+      name: topEmployeeGoal?.employeeId?.name || "Unknown",
       completed: maxCompleted,
     };
   }
+
+  const recentFeedback = feedbacks.slice(-5).map((f) => ({
+    rating: f.rating,
+    comments: f.responses.map((r) => r.answer).join("; "),
+  }));
 
   const data = {
     totalEmployees: employees.length,
@@ -71,9 +73,34 @@ module.exports.getManagerDashboardData = async (req, res) => {
       negative,
     },
     topPerformer,
+    recentFeedback,
   };
 
-  const aiInsights = await analyzePerformance(data);
+  const prompt = `
+You are an AI performance analyst. Here's the manager's team performance data:
+
+- Total Employees: ${data.totalEmployees}
+- Goals Assigned: ${data.goalsAssigned}
+- Goals Completed: ${data.goalsCompleted}
+- Goals Pending: ${data.goalsPending}
+- Feedback Summary:
+  - Total: ${data.feedbackStats.totalFeedback}
+  - Positive: ${data.feedbackStats.positive}
+  - Neutral: ${data.feedbackStats.neutral}
+  - Negative: ${data.feedbackStats.negative}
+- Top Performer: ${topPerformer?.name || "N/A"} with ${
+    topPerformer?.completed || 0
+  } goals completed
+
+Recent Feedback Responses:
+${data.recentFeedback
+  .map((f, i) => `  ${i + 1}. Rating: ${f.rating}, Comments: ${f.responses}`)
+  .join("\n")}
+
+Give a concise (max 3 sentences, 30 words) performance insight with key trends and actionable suggestions for the manager.
+  `;
+
+  const aiInsights = await analyzePerformance(prompt);
 
   res.json({ data, aiInsights });
 };

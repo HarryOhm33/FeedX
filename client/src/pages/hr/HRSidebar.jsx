@@ -2,7 +2,9 @@ import React from "react";
 import {
   FaArrowLeft,
   FaBars,
+  FaIdCard,
   FaTachometerAlt,
+  FaUserAlt,
   FaUsers,
   FaUserTie,
 } from "react-icons/fa";
@@ -111,6 +113,25 @@ const HRSidebar = ({ isExpanded, setIsExpanded }) => {
           >
             <FaUserTie size={isExpanded ? 28 : 32} />
             {isExpanded && <span className="ml-2">Managers</span>}
+          </NavLink>
+        </div>
+
+        {/* Employees Link */}
+        <div
+          className={`flex items-center ${
+            isExpanded ? "gap-3 p-3" : "justify-center p-2"
+          } rounded-md transition font-medium ${
+            isActiveRoute("/hrDashboard/Profile")
+              ? "bg-gradient-to-r from-teal-500 to-blue-600 text-white shadow-lg"
+              : "hover:bg-gray-200"
+          }`}
+        >
+          <NavLink
+            to="/hrDashboard/profile"
+            className="flex items-center w-full"
+          >
+            <FaIdCard size={isExpanded ? 28 : 32} />
+            {isExpanded && <span className="ml-2">Profile</span>}
           </NavLink>
         </div>
       </nav>

@@ -4,6 +4,9 @@ import {
   FaBars,
   FaTachometerAlt,
   FaComment,
+  FaFlagCheckered,
+  FaUserAlt,
+  FaIdCard,
 } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 
@@ -61,8 +64,8 @@ const EmployeeSidebar = ({ isExpanded, setIsExpanded }) => {
           {isExpanded && <span>Feedback</span>}
         </NavLink>
 
-        {/* <NavLink
-          to="/hrDashboard/Managers"
+        <NavLink
+          to="/employeeDashboard/Profile"
           className={({ isActive }) =>
             `flex items-center ${
               isExpanded ? "gap-3 p-3" : "justify-center p-2"
@@ -72,11 +75,11 @@ const EmployeeSidebar = ({ isExpanded, setIsExpanded }) => {
                 : "hover:bg-gray-200"
             }`
           }
-          title="Managers"
+          title="Profile"
         >
-          <FaUserTie size={isExpanded ? 28 : 32} />
-          {isExpanded && <span>Managers</span>}
-        </NavLink> */}
+          <FaIdCard size={isExpanded ? 28 : 32} />
+          {isExpanded && <span>Profile</span>}
+        </NavLink>
       </nav>
     </div>
   );

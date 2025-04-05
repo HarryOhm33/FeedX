@@ -34,7 +34,9 @@ module.exports.getEmployeeGoals = async (req, res) => {
       .json({ error: "Only employees can view their goals." });
   }
 
-  const goals = await Goal.find({ employeeId: req.user._id });
+  const goals = await Goal.find({ employeeId: req.user._id })
+    .populate("employeeId", "name ")
+    .populate("managerId", "name ");
   res.json({ goals });
 };
 
@@ -48,7 +50,11 @@ module.exports.getManagerGoals = async (req, res) => {
       .json({ error: "Only managers can view assigned goals." });
   }
 
-  const goals = await Goal.find({ managerId: req.user._id });
+  const goals = await Goal.find({ managerId: req.user._id }).populate(
+    "employeeId",
+    "name "
+  );
+
   res.json({ goals });
 };
 
@@ -125,14 +131,12 @@ module.exports.getEmployeeGoalAnalytics = async (req, res) => {
   const { employeeId } = req.params;
 
   if (req.user.role !== "manager") {
-    return res
-      .status(403)
-      .json({
-        error: "Only managers can view employee performance analytics.",
-      });
+    return res.status(403).json({
+      error: "Only managers can view employee performance analytics.",
+    });
   }
 
-  const goals = await Goal.find({ employeeId});
+  const goals = await Goal.find({ employeeId });
 
   if (goals.length === 0) {
     return res.json({
