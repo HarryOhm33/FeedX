@@ -81,7 +81,7 @@ const FeedbackForm = ({ targetId, onClose, onSubmitSuccess }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-grey flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 max-h-[80vh] overflow-y-auto relative">
         <button
           onClick={onClose}
