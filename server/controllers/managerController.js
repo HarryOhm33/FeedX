@@ -77,3 +77,14 @@ module.exports.getManagerDashboardData = async (req, res) => {
 
   res.json({ data, aiInsights });
 };
+
+module.exports.getEmployeesByManager = async (req, res) => {
+  const managerId = req.user._id;
+  const organisationId = req.user.organisationId;
+
+  const employees = await Employee.find({ organisationId })
+    .select("-password")
+    .sort({ createdAt: -1 });
+
+  res.status(200).json({ employees });
+};

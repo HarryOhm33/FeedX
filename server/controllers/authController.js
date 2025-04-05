@@ -15,8 +15,11 @@ module.exports.signup = async (req, res) => {
   const { name, email, password, organisation, organisationId } = req.body;
 
   // ✅ Check if user already exists
-  const existingUser = await HR.findOne({ email });
-  if (existingUser) {
+  const existingHR = await HR.findOne({ email });
+  const existingEmployee = await Employee.findOne({ email });
+  const existingManager = await Manager.findOne({ email });
+
+  if (existingHR || existingEmployee || existingManager) {
     return res.status(400).json({ message: "Email already exists" });
   }
 
