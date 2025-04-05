@@ -19,6 +19,8 @@ import ManagerDashboard from "./pages/manager/managerDashboard";
 import NotFound from "./components/NotFound";
 import EmployeeDetail from "./pages/hr/EmployeeDetail";
 import ManagerDetail from "./pages/hr/ManagerDetail";
+import FeedbackRequests from "./pages/employee/FeedbackRequests";
+import ManagerFeedbackRequests from "./pages/manager/ManagerFeedBackReq";
 
 function App() {
   return (
@@ -56,12 +58,14 @@ function App() {
           <Route element={<ProtectedRoute allowedRoles={["manager"]} />}>
             <Route path="/managerDashboard/*" element={<ManagerLayout />}>
               <Route index element={<ManagerDashboard />} />
+              <Route path="Feedbacks" element={<ManagerFeedbackRequests />} />
             </Route>
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={["employee"]} />}>
             <Route path="/employeeDashboard/*" element={<EmployeeLayout />}>
               <Route index element={<EmployeeDashboard />} />
+              <Route path="Feedbacks" element={<FeedbackRequests />} />
             </Route>
           </Route>
           <Route path="*" element={<NotFound />} />

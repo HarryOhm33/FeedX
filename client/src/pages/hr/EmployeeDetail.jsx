@@ -5,12 +5,14 @@ import Cookies from "js-cookie";
 import Loader from "../../components/Loader";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import TriggerFeedback from "./TriggerFeedback";
 
 const EmployeeDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showTriggerFeedback, setShowTriggerFeedback] = useState(false);
 
   useEffect(() => {
     const fetchEmployee = async () => {
@@ -59,6 +61,10 @@ const EmployeeDetail = () => {
     navigate(-1);
   };
 
+  const handleTriggerFeedback = () => {
+    setShowTriggerFeedback(true);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white">
@@ -88,24 +94,32 @@ const EmployeeDetail = () => {
   return (
     <div className="min-h-screen bg-white p-6 ml-[50px] mt-16">
       <div className="max-w-4xl mx-auto">
-        <button
-          onClick={handleBackClick}
-          className="flex items-center text-blue-600 hover:text-blue-800 mb-6"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 mr-2"
-            viewBox="0 0 20 20"
-            fill="currentColor"
+        <div className="flex justify-between items-center mb-6">
+          <button
+            onClick={handleBackClick}
+            className="flex items-center text-blue-600 hover:text-blue-800"
           >
-            <path
-              fillRule="evenodd"
-              d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Back to Employees
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 mr-2"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Back to Employees
+          </button>
+          <button
+            onClick={handleTriggerFeedback}
+            className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition-colors"
+          >
+            Trigger Feedback
+          </button>
+        </div>
 
         <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
           <div className="p-6 border-b border-gray-200 bg-gray-50">
@@ -195,6 +209,13 @@ const EmployeeDetail = () => {
           </div>
         </div>
       </div>
+
+      {showTriggerFeedback && (
+        <TriggerFeedback
+          employeeId={employee._id}
+          onClose={() => setShowTriggerFeedback(false)}
+        />
+      )}
     </div>
   );
 };

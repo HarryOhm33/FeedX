@@ -6,9 +6,11 @@ const feedbackRequestSchema = new mongoose.Schema({
   targetId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
+    refPath: "targetModel",
   },
   targetModel: {
     type: String,
+    required: true,
     enum: ["Employee", "Manager"],
   },
   requestedBy: {
@@ -41,24 +43,26 @@ const feedbackRequestSchema = new mongoose.Schema({
   ],
   responderModel: {
     type: String,
+    required: true,
     enum: ["Employee", "Manager"],
   },
   expiresAt: {
     type: Date,
-    default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
   },
 });
 
-// Auto-assign targetModel
+// Auto-set the targetModel before saving
 feedbackRequestSchema.pre("save", async function (next) {
-  const employeeExists = await Employee.exists({ _id: this.targetId });
-  const managerExists = await Manager.exists({ _id: this.targetId });
+  if (!this.targetModel) {
+    const employeeExists = await Employee.exists({ _id: this.targetId });
+    const managerExists = await Manager.exists({ _id: this.targetId });
 
-  if (employeeExists) this.targetModel = "Employee";
-  else if (managerExists) this.targetModel = "Manager";
-  else
-    return next(new Error("Invalid targetId: No Employee or Manager found."));
-
+    if (employeeExists) this.targetModel = "Employee";
+    else if (managerExists) this.targetModel = "Manager";
+    else
+      return next(new Error("Invalid targetId: No Employee or Manager found."));
+  }
   next();
 });
 

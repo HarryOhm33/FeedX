@@ -155,7 +155,9 @@ module.exports.getFeedbackRequests = async (req, res) => {
   const requests = await FeedbackRequest.find({
     leftResponders: req.user._id,
     expiresAt: { $gte: new Date() },
-  }).populate("targetId", "name role");
+  })
+    .populate("targetId", "name") // Get target's name
+    .populate("requestedBy", "name"); // Get requester's name
 
   res.json({
     success: true,

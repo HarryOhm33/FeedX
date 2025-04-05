@@ -1,5 +1,10 @@
 import React from "react";
-import { FaArrowLeft, FaBars, FaTachometerAlt } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaBars,
+  FaComment,
+  FaTachometerAlt,
+} from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 
 const ManagerSidebar = ({ isExpanded, setIsExpanded }) => {
@@ -39,8 +44,8 @@ const ManagerSidebar = ({ isExpanded, setIsExpanded }) => {
           {isExpanded && <span>Dashboard</span>}
         </NavLink>
 
-        {/* <NavLink
-          to="/hrDashboard/Employees"
+        <NavLink
+          to="/managerDashboard/Feedbacks"
           className={({ isActive }) =>
             `flex items-center ${
               isExpanded ? "gap-3 p-3" : "justify-center p-2"
@@ -52,9 +57,9 @@ const ManagerSidebar = ({ isExpanded, setIsExpanded }) => {
           }
           title="Employees"
         >
-          <FaUsers size={isExpanded ? 28 : 32} />
-          {isExpanded && <span>Employees</span>}
-        </NavLink> */}
+          <FaComment size={isExpanded ? 28 : 32} />
+          {isExpanded && <span>Feedback</span>}
+        </NavLink>
 
         {/* <NavLink
           to="/hrDashboard/Managers"

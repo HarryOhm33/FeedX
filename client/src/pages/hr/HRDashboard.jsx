@@ -1,18 +1,18 @@
-import { useAuth } from "../../context/AuthContext";
-import { useState, useEffect } from "react";
 import axios from "axios";
-import Cookies from "js-cookie";
-import { Bar, Pie, Doughnut } from "react-chartjs-2";
 import {
-  Chart as ChartJS,
   ArcElement,
   BarElement,
   CategoryScale,
+  Chart as ChartJS,
+  Legend,
   LinearScale,
   Tooltip,
-  Legend,
 } from "chart.js";
+import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
+import { Bar, Doughnut, Pie } from "react-chartjs-2";
 import Loader from "../../components/Loader";
+import { useAuth } from "../../context/AuthContext";
 
 // Register Chart.js components
 ChartJS.register(
@@ -432,7 +432,7 @@ const HRDashboard = () => {
                 </div>
                 <div>
                   <h3 className="font-medium text-slate-800">
-                    {topPerformer.name||"anonymous"}
+                    {topPerformer.name || "anonymous"}
                   </h3>
                   <p className="text-sm text-slate-500 mb-2">
                     Highest goal completion rate

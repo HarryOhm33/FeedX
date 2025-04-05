@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
-import Cookies from "js-cookie";
-import { Bar, Pie, Doughnut } from "react-chartjs-2";
 import {
-  Chart as ChartJS,
   ArcElement,
   BarElement,
   CategoryScale,
+  Chart as ChartJS,
+  Legend,
   LinearScale,
   Tooltip,
-  Legend,
 } from "chart.js";
-import Loader from "../../components/Loader";
+import Cookies from "js-cookie";
+import React, { useEffect, useState } from "react";
+import { Bar, Doughnut, Pie } from "react-chartjs-2";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "../../components/Loader";
+import NotificationBell from "../../components/NotificationBell";
+import { useAuth } from "../../context/AuthContext";
 
 // Register Chart.js components
 ChartJS.register(
@@ -199,15 +200,21 @@ const ManagerDashboard = () => {
   };
 
   return (
-    <div className="p-4 md:p-8 ml-0 ml-[55px] min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-15">
+    <div className="p-4 md:p-8 ml-0 ml-[55px] min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-14">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
-            Welcome, {user?.name} 👋
-          </h1>
-          <p className="text-gray-500 mt-2">
-            Manager dashboard overview and team insights
-          </p>
+        <header className="mb-8 flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
+              Welcome, {user?.name} 👋
+            </h1>
+            <p className="text-gray-500 mt-2">
+              Your performance dashboard and insights
+            </p>
+          </div>
+
+          <div className="mt-1 relative">
+            <NotificationBell />
+          </div>
         </header>
 
         {/* Stats Grid */}
