@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
 
 const sendEmail = async (email, subject, htmlContent) => {
   await transporter.sendMail({
-    from: `"Elevate HR" <${process.env.EMAIL_USER}>`,
+    from: `"FeedX" <${process.env.EMAIL_USER}>`,
     to: email,
     subject,
     html: htmlContent, // Send HTML instead of plain text

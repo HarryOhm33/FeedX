@@ -198,3 +198,37 @@ module.exports.userCreationTemplate = (name, email, password, role) => {
       </html>
     `;
 };
+
+module.exports.pendingGoalTemplate = (name, goalTitle) => {
+  return {
+    subject: "⏰ Pending Goal Reminder",
+    html: `
+        <div style="font-family: 'Segoe UI', sans-serif; padding: 20px; background-color: #f0fdfa; color: #064e3b;">
+          <h2 style="color: #0d9488;">Reminder: Pending Goal</h2>
+          <p>Hi ${name},</p>
+          <p>You have a pending goal titled <strong>"${goalTitle}"</strong>.</p>
+          <p>Please complete it as soon as possible.</p>
+          <br/>
+          <p>Stay productive!</p>
+          <p><strong>FeedX</strong></p>
+        </div>
+      `,
+  };
+};
+
+module.exports.pendingFeedbackTemplate = (name, sessionName) => {
+  return {
+    subject: "📝 Feedback Submission Pending",
+    html: `
+        <div style="font-family: 'Segoe UI', sans-serif; padding: 20px; background-color: #fefce8; color: #78350f;">
+          <h2 style="color: #ca8a04;">Feedback Needed</h2>
+          <p>Hi ${name},</p>
+          <p>You still need to submit your feedback for the session <strong>${sessionName}</strong>.</p>
+          <p>Please visit your dashboard and complete it soon.</p>
+          <br/>
+          <p>Thanks for your input!</p>
+          <p><strong>FeedX</strong></p>
+        </div>
+      `,
+  };
+};

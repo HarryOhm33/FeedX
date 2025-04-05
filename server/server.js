@@ -22,13 +22,10 @@ const feedbackRoute = require("./routes/feedbackRoute");
 const goalRoute = require("./routes/goalRoute");
 const managerRoute = require("./routes/managerRoute");
 const employeeRoute = require("./routes/employeeRoute");
+const notificationRoute = require("./routes/notificationRoute");
 
 const corsOptions = {
-  origin: [
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "https://elevatehr-m2.netlify.app",
-  ], // Tumhare frontend origins
+  origin: ["http://localhost:5173", "http://localhost:5174"], // Tumhare frontend origins
   credentials: true, // Cookies aur auth headers allow karne ke liye
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Sab methods allow
   allowedHeaders: ["Content-Type", "Authorization"], // Required headers
@@ -51,6 +48,7 @@ app.use("/api/feedback", feedbackRoute);
 app.use("/api/goal", goalRoute);
 app.use("/api/manager", managerRoute);
 app.use("/api/employee", employeeRoute);
+app.use("/api/notif", notificationRoute);
 
 // 404 Handler
 app.all("*", (req, res, next) => {

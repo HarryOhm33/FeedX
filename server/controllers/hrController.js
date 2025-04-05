@@ -4,6 +4,7 @@ const { userCreationTemplate } = require("../utils/mailTemplates");
 const sendEmail = require("../utils/sendEmail");
 const Manager = require("../models/manager");
 const Employee = require("../models/employee");
+const HR = require("../models/hr");
 const Goal = require("../models/goal");
 const Feedback = require("../models/feedback");
 const { analyzePerformance } = require("../services/geminiService");
@@ -32,16 +33,15 @@ module.exports.createUser = async (req, res) => {
   }
 
   // 🔒 Check if the email already exists across all user collections
-  // const existingUser =
-  //   (await HR.findOne({ email })) ||
-  //   (await Manager.findOne({ email })) ||
-  //   (await Employee.findOne({ email }));
+  const existingHr = await HR.findOne({ email });
+  const existingManager = await Manager.findOne({ email });
+  const existingEmployee = await Employee.findOne({ email });
 
-  // if (existingUser) {
-  //   return res
-  //     .status(400)
-  //     .json({ message: "User with this email already exists" });
-  // }
+  if (existingHr || existingManager || existingEmployee) {
+    return res
+      .status(400)
+      .json({ message: "User with this email already exists" });
+  }
 
   // ✅ Hash the password before saving
   const hashedPassword = await bcrypt.hash(password, 10);
