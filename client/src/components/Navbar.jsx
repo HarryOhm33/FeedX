@@ -51,7 +51,7 @@ const Navbar = () => {
         {/* Desktop Navigation */}
         <div className="hidden lg:flex space-x-10 items-center">
           <NavLink to="/" label="Home" icon={<Home />} />
-          <NavLink to="/blog" label="Blog" icon={<FileText />} />
+          <NavLink to="/docs" label="Docs" icon={<FileText />} />
           <NavLink to="/feedback" label="Feedback" icon={<MessageSquare />} />
         </div>
 

@@ -27,6 +27,7 @@ import EmployeeDetailsM from "./pages/manager/EmployeeDetailsM";
 import Goals from "./pages/manager/Goals";
 import GoalE from "./pages/employee/GoalE";
 import ProfileSection from "./pages/ProfileSection";
+import Techdocx from "./pages/Docs";
 
 function App() {
   return (
@@ -88,7 +89,9 @@ function App() {
               <Route path="*" element={<NotFound />} />
             </Route>
           </Route>
+          <Route path="/docs" element={<Techdocx />} />
           <Route path="*" element={<NotFound />} />
+          
         </Routes>
       </AuthProvider>
     </Router>
