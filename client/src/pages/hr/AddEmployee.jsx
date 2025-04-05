@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import Cookies from "js-cookie";
+import React, { useState } from "react";
+import { FaEye, FaEyeSlash, FaUser } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../../context/AuthContext";
 
 const AddEmployee = ({ onClose }) => {
   const { user } = useAuth();
@@ -52,62 +52,76 @@ const AddEmployee = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 w-screen h-screen flex items-center justify-center bg-black/50 backdrop-blur-md z-50">
-      <div className="w-full h-full flex items-center justify-center">
-        <div className="bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg p-6 rounded-lg w-full max-w-md">
-          <h2 className="text-xl font-bold text-white mb-4 text-center">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 transition-opacity duration-300">
+      <div className="w-full h-full flex items-center justify-center px-4">
+        <div className="bg-white border border-blue-500 shadow-xl p-8 rounded-2xl w-full max-w-lg text-gray-800 animate-fade-in-down">
+          <h2 className="text-2xl font-extrabold text-center mb-6 tracking-wide flex items-center justify-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-500">
+            <FaUser className="text-blue-600" />
             Add New Employee
           </h2>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <input
-              type="text"
-              placeholder="Employee Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="border border-gray-400 p-2 rounded-md bg-transparent text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <div className="flex flex-col">
+              <label className="mb-1 text-sm font-medium text-gray-700">
+                Employee Name
+              </label>
+              <input
+                type="text"
+                placeholder="Enter name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="bg-gray-100 text-gray-800 placeholder-gray-500 border border-gray-300 focus:ring-2 focus:ring-blue-500 p-3 rounded-lg outline-none"
+                required
+              />
+            </div>
 
-            <input
-              type="email"
-              placeholder="Employee Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="border border-gray-400 p-2 rounded-md bg-transparent text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
+            <div className="flex flex-col">
+              <label className="mb-1 text-sm font-medium text-gray-700">
+                Employee Email
+              </label>
+              <input
+                type="email"
+                placeholder="Enter email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="bg-gray-100 text-gray-800 placeholder-gray-500 border border-gray-300 focus:ring-2 focus:ring-blue-500 p-3 rounded-lg outline-none"
+                required
+              />
+            </div>
 
-            <div className="relative">
+            <div className="flex flex-col relative">
+              <label className="mb-1 text-sm font-medium text-gray-700">
+                Password
+              </label>
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="Temporary Password"
+                placeholder="Enter password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="border border-gray-400 p-2 rounded-md bg-transparent text-white placeholder-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+                className="bg-gray-100 text-gray-800 placeholder-gray-500 border border-gray-300 focus:ring-2 focus:ring-blue-500 p-3 pr-12 rounded-lg outline-none"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-300 hover:text-white transition"
+                className="absolute top-[36px] right-3 text-gray-500 hover:text-gray-800 transition"
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
 
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-4 mt-4">
               <button
                 type="button"
                 onClick={onClose}
-                className="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-200"
+                className="w-full bg-red-100 hover:bg-red-500 hover:text-white text-red-700 font-semibold py-2 rounded-lg transition-all duration-200 shadow-md hover:scale-105"
                 disabled={isSubmitting}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-200"
+                className="w-full bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-bold py-2 rounded-lg transition-all duration-200 shadow-md hover:scale-105"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Adding..." : "Add Employee"}
