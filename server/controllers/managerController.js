@@ -5,80 +5,75 @@ const Feedback = require("../models/feedback");
 const { analyzePerformance } = require("../services/geminiService");
 
 module.exports.getManagerDashboardData = async (req, res) => {
-  try {
-    const managerId = req.user._id;
+  const managerId = req.user._id;
 
-    const employees = await Employee.find({});
-    const managedEmployeeIds = employees
-      .filter((emp) => emp.managerId?.toString() === managerId.toString())
-      .map((emp) => emp._id);
+  const employees = await Employee.find({
+    organisationId: req.user.organisationId,
+  });
 
-    const goals = await Goal.find({ managerId }).populate("employeeId", "name");
+  const goals = await Goal.find({ managerId }).populate("employeeId", "name");
 
-    const feedbacks = await Feedback.find({
-      receiverId: { $in: managedEmployeeIds },
-      receiverModel: "Employee",
-    });
+  const feedbacks = await Feedback.find({
+    receiverId: { $in: employees },
+    receiverModel: "Employee",
+  });
 
-    const completedGoals = goals.filter((g) => g.status === "Completed");
-    const pendingGoals = goals.filter((g) => g.status !== "Completed");
+  const completedGoals = goals.filter((g) => g.status === "Completed");
+  const pendingGoals = goals.filter((g) => g.status !== "Completed");
 
-    const totalFeedback = feedbacks.length;
-    const positive = feedbacks.filter((f) => f.rating >= 4).length;
-    const neutral = feedbacks.filter((f) => f.rating === 3).length;
-    const negative = feedbacks.filter((f) => f.rating <= 2).length;
+  const totalFeedback = feedbacks.length;
+  const positive = feedbacks.filter((f) => f.rating >= 4).length;
+  const neutral = feedbacks.filter((f) => f.rating === 3).length;
+  const negative = feedbacks.filter((f) => f.rating <= 2).length;
 
-    const goalCompletionMap = {};
-    completedGoals.forEach((g) => {
-      if (g.employeeId && g.employeeId._id) {
-        const empId = g.employeeId._id.toString();
-        goalCompletionMap[empId] = (goalCompletionMap[empId] || 0) + 1;
-      }
-    });
-
-    let topPerformerId = null;
-    let maxCompleted = 0;
-
-    for (const [empId, count] of Object.entries(goalCompletionMap)) {
-      if (count > maxCompleted) {
-        maxCompleted = count;
-        topPerformerId = empId;
-      }
+  const goalCompletionMap = {};
+  completedGoals.forEach((g) => {
+    if (g.employeeId && g.employeeId._id) {
+      const empId = g.employeeId._id.toString();
+      goalCompletionMap[empId] = (goalCompletionMap[empId] || 0) + 1;
     }
+  });
 
-    let topPerformer = null;
-    if (topPerformerId) {
-      const topEmployeeGoal = completedGoals.find(
-        (g) => g.employeeId && g.employeeId._id.toString() === topPerformerId
-      );
-      topPerformer = {
-        _id: topPerformerId,
-        name:
-          topEmployeeGoal && topEmployeeGoal.employeeId
-            ? topEmployeeGoal.employeeId.name
-            : "Unknown",
-        completed: maxCompleted,
-      };
+  let topPerformerId = null;
+  let maxCompleted = 0;
+
+  for (const [empId, count] of Object.entries(goalCompletionMap)) {
+    if (count > maxCompleted) {
+      maxCompleted = count;
+      topPerformerId = empId;
     }
-
-    const data = {
-      totalEmployees: managedEmployeeIds.length,
-      goalsAssigned: goals.length,
-      goalsCompleted: completedGoals.length,
-      goalsPending: pendingGoals.length,
-      feedbackStats: {
-        totalFeedback,
-        positive,
-        neutral,
-        negative,
-      },
-      topPerformer,
-    };
-
-    const aiInsights = await analyzePerformance(data);
-    res.json({ data, aiInsights });
-  } catch (err) {
-    console.error("Manager dashboard error:", err);
-    res.status(500).json({ error: "Failed to fetch manager dashboard data" });
   }
+
+  let topPerformer = null;
+  if (topPerformerId) {
+    const topEmployeeGoal = completedGoals.find(
+      (g) => g.employeeId && g.employeeId._id.toString() === topPerformerId
+    );
+    topPerformer = {
+      _id: topPerformerId,
+      name:
+        topEmployeeGoal && topEmployeeGoal.employeeId
+          ? topEmployeeGoal.employeeId.name
+          : "Unknown",
+      completed: maxCompleted,
+    };
+  }
+
+  const data = {
+    totalEmployees: employees.length,
+    goalsAssigned: goals.length,
+    goalsCompleted: completedGoals.length,
+    goalsPending: pendingGoals.length,
+    feedbackStats: {
+      totalFeedback,
+      positive,
+      neutral,
+      negative,
+    },
+    topPerformer,
+  };
+
+  const aiInsights = await analyzePerformance(data);
+
+  res.json({ data, aiInsights });
 };
