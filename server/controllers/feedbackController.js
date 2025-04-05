@@ -3,6 +3,7 @@ const FeedbackRequest = require("../models/feedbackReq");
 const Employee = require("../models/employee");
 const Manager = require("../models/manager");
 const questionsByRole = require("../utils/questions");
+const questions = require("../utils/questions");
 
 // ✅ HR triggers feedback for an Employee or Manager
 module.exports.triggerFeedback = async (req, res) => {
@@ -61,9 +62,10 @@ module.exports.triggerFeedback = async (req, res) => {
 
 // ✅ Submit Feedback (Only if feedback was requested)
 module.exports.submitFeedback = async (req, res) => {
-  const { targetId, responses, sessionName } = req.body;
+  const { targetId, responses, rating } = req.body;
   const giverId = req.user._id;
 
+  // Step 1: Find active feedback request
   const feedbackRequest = await FeedbackRequest.findOne({
     targetId,
     expiresAt: { $gte: new Date() },
@@ -76,6 +78,7 @@ module.exports.submitFeedback = async (req, res) => {
     });
   }
 
+  // Step 2: Check if giver is allowed to respond
   if (!feedbackRequest.leftResponders.includes(giverId)) {
     return res.status(403).json({
       success: false,
@@ -84,11 +87,11 @@ module.exports.submitFeedback = async (req, res) => {
     });
   }
 
-  // Determine giverModel
-  let giverModel = (await Employee.exists({ _id: giverId }))
+  // Step 3: Determine roles
+  const giverModel = (await Employee.exists({ _id: giverId }))
     ? "Employee"
     : "Manager";
-  let receiverModel = (await Employee.exists({ _id: targetId }))
+  const receiverModel = (await Employee.exists({ _id: targetId }))
     ? "Employee"
     : "Manager";
 
@@ -102,20 +105,37 @@ module.exports.submitFeedback = async (req, res) => {
     });
   }
 
+  // Step 4: Validate each response has question & answer
+  for (let i = 0; i < expectedQuestions.length; i++) {
+    if (
+      responses[i].question !== expectedQuestions[i] ||
+      typeof responses[i].answer !== "string"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid or mismatched response at index ${i}.`,
+      });
+    }
+  }
+
+  // Step 5: Create and save feedback
   const feedback = new Feedback({
+    feedbackRequestId: feedbackRequest._id,
     giverId,
-    receiverId: targetId,
     giverModel,
+    receiverId: targetId,
     receiverModel,
     responses,
-    sessionName: feedbackRequest.sessionName,
+    rating,
   });
 
   await feedback.save();
 
+  // Step 6: Update feedbackRequest status
   feedbackRequest.leftResponders = feedbackRequest.leftResponders.filter(
     (id) => id.toString() !== giverId.toString()
   );
+
   feedbackRequest.respondedBy.push({
     responderId: giverId,
     respondedAt: new Date(),
@@ -155,20 +175,16 @@ module.exports.getFeedbackAnalytics = async (req, res) => {
 
   const totalFeedbacks = feedbacks.length;
 
-  // Average rating (sum of all responses / # of questions / # of feedbacks)
-  const totalResponses = feedbacks.reduce((sum, fb) => {
-    return sum + fb.responses.reduce((a, b) => a + b, 0);
-  }, 0);
-  const totalQuestions = feedbacks[0].responses.length;
+  const totalRating = feedbacks.reduce((sum, fb) => sum + fb.rating, 0);
+  const avgRating = totalRating / totalFeedbacks;
 
-  const avgRating = totalResponses / (totalFeedbacks * totalQuestions);
-
-  // Rating breakdown per question
+  // Optional: analyze response answers by question
   const questionStats = {};
   feedbacks.forEach((fb) => {
-    fb.responses.forEach((rating, index) => {
-      if (!questionStats[index]) questionStats[index] = {};
-      questionStats[index][rating] = (questionStats[index][rating] || 0) + 1;
+    fb.responses.forEach((response) => {
+      const q = response.question;
+      if (!questionStats[q]) questionStats[q] = [];
+      questionStats[q].push(response.answer);
     });
   });
 
@@ -183,19 +199,14 @@ module.exports.getFeedbackForm = async (req, res) => {
   const giverId = req.user._id;
   const targetId = req.params.targetId;
 
-  // Get giver role
-  const giverModel = (await Employee.findById(giverId))
-    ? "employee"
-    : (await Manager.findById(giverId))
-    ? "manager"
-    : null;
+  let giverModel = null;
+  let targetModel = null;
 
-  // Get target role
-  const targetModel = (await Employee.findById(targetId))
-    ? "employee"
-    : (await Manager.findById(targetId))
-    ? "manager"
-    : null;
+  if (await Employee.exists({ _id: giverId })) giverModel = "employee";
+  else if (await Manager.exists({ _id: giverId })) giverModel = "manager";
+
+  if (await Employee.exists({ _id: targetId })) targetModel = "employee";
+  else if (await Manager.exists({ _id: targetId })) targetModel = "manager";
 
   if (!giverModel || !targetModel) {
     return res.status(404).json({
@@ -204,16 +215,10 @@ module.exports.getFeedbackForm = async (req, res) => {
     });
   }
 
-  let questionSet;
+  const roleKey = `${giverModel.toLowerCase()}To${targetModel.toLowerCase()}`;
+  const questionSet = questions[roleKey];
 
-  // Determine relationship
-  if (giverModel === "employee" && targetModel === "employee") {
-    questionSet = questions.employeeToEmployee;
-  } else if (giverModel === "employee" && targetModel === "manager") {
-    questionSet = questions.employeeToManager;
-  } else if (giverModel === "manager" && targetModel === "employee") {
-    questionSet = questions.managerToEmployee;
-  } else {
+  if (!questionSet) {
     return res.status(400).json({
       success: false,
       message: "Invalid feedback relationship.",
@@ -222,9 +227,7 @@ module.exports.getFeedbackForm = async (req, res) => {
 
   res.json({
     success: true,
-    roleRelation: `${giverModel}To${targetModel
-      .charAt(0)
-      .toUpperCase()}${targetModel.slice(1)}`,
+    roleRelation: roleKey,
     questions: questionSet,
   });
 };
