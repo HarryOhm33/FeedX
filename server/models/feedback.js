@@ -9,6 +9,7 @@ const feedbackSchema = new mongoose.Schema({
   receiverId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
+    refPath: "receiverModel", // 👈 dynamic reference
   },
   receiverModel: {
     type: String,
@@ -18,6 +19,7 @@ const feedbackSchema = new mongoose.Schema({
   giverId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
+    refPath: "giverModel", // 👈 dynamic reference
   },
   giverModel: {
     type: String,

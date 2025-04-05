@@ -231,3 +231,35 @@ module.exports.getFeedbackForm = async (req, res) => {
     questions: questionSet,
   });
 };
+
+// ✅ Controller to get all sessions for a certain targetId
+module.exports.getSessionsByTarget = async (req, res) => {
+  const { targetId } = req.params;
+
+  const sessions = await FeedbackRequest.find({ targetId })
+    .populate("targetId", "name") // populating with name and email fields
+    .sort({ createdAt: -1 });
+
+  res.status(200).json({
+    success: true,
+    count: sessions.length,
+    sessions,
+  });
+};
+
+// ✅ Controller to get all feedbacks for a feedbackRequestId
+module.exports.getFeedbacksByRequestId = async (req, res) => {
+  const { feedbackRequestId } = req.params;
+
+  const feedbacks = await Feedback.find({ feedbackRequestId }).populate({
+    path: "giverId",
+    select: "name", // fields to include
+    strictPopulate: false, // allows dynamic refPath
+  });
+
+  res.status(200).json({
+    success: true,
+    count: feedbacks.length,
+    feedbacks,
+  });
+};

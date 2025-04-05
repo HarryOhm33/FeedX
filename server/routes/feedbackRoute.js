@@ -8,6 +8,8 @@ const {
   getFeedbackRequests,
   getFeedbackAnalytics,
   getFeedbackForm,
+  getSessionsByTarget,
+  getFeedbacksByRequestId,
 } = require("../controllers/feedbackController");
 
 const checkHR = require("../middleware/checkHR");
@@ -30,5 +32,21 @@ router.get(
 );
 
 router.get("/form/:targetId", authenticate, getFeedbackForm);
+
+// ✅ Get all sessions for a specific targetId (HR access)
+router.get(
+  "/sessions/:targetId",
+  authenticate,
+  checkHR,
+  wrapAsync(getSessionsByTarget)
+);
+
+// ✅ Get all feedbacks by feedbackRequestId (HR access)
+router.get(
+  "/responses/:feedbackRequestId",
+  authenticate,
+  checkHR,
+  wrapAsync(getFeedbacksByRequestId)
+);
 
 module.exports = router;

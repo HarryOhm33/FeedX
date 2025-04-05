@@ -151,31 +151,19 @@ module.exports.getHrDashboardData = async (req, res) => {
 };
 
 module.exports.getEmployeeList = async (req, res) => {
-  try {
-    const employees = await Employee.find(
-      { organisationId: req.user.organisationId },
-      { _id: 1, name: 1, email: 1, role: 1 }
-    ).sort({ createdAt: -1 });
+  const employees = await Employee.find(
+    { organisationId: req.user.organisationId },
+    { password: 0 } // exclude password field
+  ).sort({ createdAt: -1 });
 
-    res.status(200).json({ employees });
-  } catch (err) {
-    console.error("Error fetching employee list:", err);
-    res.status(500).json({ message: "Server error while fetching employees" });
-  }
+  res.status(200).json({ employees });
 };
 
 module.exports.getManagerList = async (req, res) => {
-  try {
-    const managers = await Manager.find(
-      { organisationId: req.user.organisationId },
-      { _id: 1, name: 1, email: 1, role: 1 }
-    ).sort({ createdAt: -1 });
+  const managers = await Manager.find(
+    { organisationId: req.user.organisationId },
+    { password: 0 }
+  ).sort({ createdAt: -1 });
 
-    res.status(200).json({ managers });
-  } catch (err) {
-    console.error("Error fetching manager list:", err);
-    res.status(500).json({ message: "Server error while fetching managers" });
-  }
+  res.status(200).json({ managers });
 };
-
-

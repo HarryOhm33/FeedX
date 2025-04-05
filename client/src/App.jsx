@@ -21,6 +21,7 @@ import EmployeeDetail from "./pages/hr/EmployeeDetail";
 import ManagerDetail from "./pages/hr/ManagerDetail";
 import FeedbackRequests from "./pages/employee/FeedbackRequests";
 import ManagerFeedbackRequests from "./pages/manager/ManagerFeedBackReq";
+import Feedback from "./pages/hr/FeedBack";
 
 function App() {
   return (
@@ -52,6 +53,10 @@ function App() {
               <Route path="employee/:id" element={<EmployeeDetail />} />
               <Route path="Managers" element={<Manager />} />
               <Route path="manager/:id" element={<ManagerDetail />} />
+              <Route
+                path="Feedback/:feedbackRequestId"
+                element={<Feedback />}
+              />
             </Route>
           </Route>
 

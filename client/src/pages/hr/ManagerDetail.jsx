@@ -13,6 +13,11 @@ const ManagerDetail = () => {
   const [manager, setManager] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showTriggerFeedback, setShowTriggerFeedback] = useState(false);
+  const [feedbackSessions, setFeedbackSessions] = useState({
+    active: [],
+    expired: [],
+  });
+  const [sessionsLoading, setSessionsLoading] = useState(false);
 
   useEffect(() => {
     const fetchManager = async () => {
@@ -54,11 +59,115 @@ const ManagerDetail = () => {
       }
     };
 
+    const fetchFeedbackSessions = async () => {
+      try {
+        setSessionsLoading(true);
+        const token = Cookies.get("markAuth");
+        const response = await axios.get(
+          `http://localhost:8001/api/feedback/sessions/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const now = new Date();
+        const activeSessions = [];
+        const expiredSessions = [];
+
+        response.data.sessions.forEach((session) => {
+          const expiresAt = new Date(session.expiresAt);
+          if (expiresAt > now) {
+            activeSessions.push(session);
+          } else {
+            expiredSessions.push(session);
+          }
+        });
+
+        setFeedbackSessions({
+          active: activeSessions,
+          expired: expiredSessions,
+        });
+      } catch (err) {
+        toast.error("Failed to fetch feedback sessions");
+        console.error("Error fetching sessions:", err);
+      } finally {
+        setSessionsLoading(false);
+      }
+    };
+
     fetchManager();
+    fetchFeedbackSessions();
   }, [id, navigate]);
 
   const handleBackClick = () => {
     navigate(-1);
+  };
+
+  const handleSessionClick = (sessionId) => {
+    navigate(`/hrDashboard/Feedback/${sessionId}`);
+  };
+
+  const renderSessionList = (sessions, isExpired = false) => {
+    if (sessionsLoading) {
+      return (
+        <div className="flex justify-center py-4">
+          <Loader size="sm" />
+        </div>
+      );
+    }
+
+    if (sessions.length === 0) {
+      return (
+        <div className="bg-gray-50 p-4 rounded-lg text-center">
+          <p className="text-gray-500">
+            No {isExpired ? "expired" : "active"} feedback sessions
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <ul className="space-y-3">
+        {sessions.map((session) => (
+          <li
+            key={session._id}
+            onClick={() => handleSessionClick(session._id)}
+            className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="font-medium text-gray-800">
+                  {session.sessionName}
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Requested by: {session.requestedBy?.name || "Unknown"}
+                </p>
+                <p className="text-sm text-gray-500">
+                  Expires: {new Date(session.expiresAt).toLocaleString()}
+                </p>
+              </div>
+              <span
+                className={`px-2 py-1 text-xs rounded-full ${
+                  isExpired
+                    ? "bg-red-100 text-red-800"
+                    : "bg-green-100 text-green-800"
+                }`}
+              >
+                {isExpired ? "Expired" : "Active"}
+              </span>
+            </div>
+            <div className="mt-2 text-sm">
+              <span className="text-gray-600">
+                Responses: {session.respondedBy.length}/
+                {session.leftResponders.length + session.respondedBy.length}
+              </span>
+            </div>
+          </li>
+        ))}
+      </ul>
+    );
   };
 
   if (loading) {
@@ -117,7 +226,7 @@ const ManagerDetail = () => {
           </button>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mb-8">
           <div className="p-6 border-b border-gray-200 bg-purple-50">
             <div className="flex items-center">
               <div className="flex-shrink-0 h-16 w-16 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 text-2xl font-bold">
@@ -188,6 +297,31 @@ const ManagerDetail = () => {
                     </p>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Feedback Sessions Section */}
+        <div className="space-y-8">
+          <div>
+            <h2 className="text-xl font-bold text-gray-800 mb-4">
+              Feedback Sessions
+            </h2>
+
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-medium text-gray-800 mb-3">
+                  Active Sessions
+                </h3>
+                {renderSessionList(feedbackSessions.active)}
+              </div>
+
+              <div>
+                <h3 className="text-lg font-medium text-gray-800 mb-3">
+                  Expired Sessions
+                </h3>
+                {renderSessionList(feedbackSessions.expired, true)}
               </div>
             </div>
           </div>
