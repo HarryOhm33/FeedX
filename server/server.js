@@ -17,14 +17,18 @@ const ExpressError = require("./utils/ExpressError");
 
 // Routes
 const authRoute = require("./routes/authRoute");
-// const hrRoute = require("./routes/hrRoute");
-// const feedbackRoute = require("./routes/feedbackRoute");
-// const goalRoute = require("./routes/goalRoute");
-// const managerRoute = require("./routes/managerRoute");
-// const employeeRoute = require("./routes/employeeRoute");
+const hrRoute = require("./routes/hrRoute");
+const feedbackRoute = require("./routes/feedbackRoute");
+const goalRoute = require("./routes/goalRoute");
+const managerRoute = require("./routes/managerRoute");
+const employeeRoute = require("./routes/employeeRoute");
 
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://localhost:5174"], // Tumhare frontend origins
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "https://elevatehr-m2.netlify.app",
+  ], // Tumhare frontend origins
   credentials: true, // Cookies aur auth headers allow karne ke liye
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Sab methods allow
   allowedHeaders: ["Content-Type", "Authorization"], // Required headers
@@ -42,11 +46,11 @@ app.use(cookieParser()); // Cookie handling ke liye
 
 // Routes
 app.use("/api/auth", authRoute);
-// app.use("/api/hr", hrRoute);
-// app.use("/api/feedback", feedbackRoute);
-// app.use("/api/goal", goalRoute);
-// app.use("/api/manager", managerRoute);
-// app.use("/api/employee", employeeRoute);
+app.use("/api/hr", hrRoute);
+app.use("/api/feedback", feedbackRoute);
+app.use("/api/goal", goalRoute);
+app.use("/api/manager", managerRoute);
+app.use("/api/employee", employeeRoute);
 
 // 404 Handler
 app.all("*", (req, res, next) => {

@@ -54,7 +54,7 @@ module.exports.signup = async (req, res) => {
   await OTP.deleteOne({ email });
 
   // ✅ Send OTP via email
-  const htmlContent = generateOtpEmail(otp, name);
+  const htmlContent = generateOtpEmail(otp);
   await sendEmail(email, "Verify Your Account", htmlContent);
 
   // ✅ Temporarily store user details (hash password)
@@ -197,7 +197,7 @@ module.exports.verifyOTP = async (req, res) => {
 };
 
 module.exports.resendOTP = async (req, res) => {
-  const { email, name } = req.body;
+  const { email } = req.body;
 
   const existingUser = await OTP.findOne({ email });
   if (!existingUser)
@@ -215,7 +215,7 @@ module.exports.resendOTP = async (req, res) => {
   await OTP.updateOne({ email }, { otp });
 
   // ✅ Send OTP via email
-  const htmlContent = generateOtpEmail(otp, name);
+  const htmlContent = generateOtpEmail(otp);
   await sendEmail(email, "Resend OTP", htmlContent);
 
   res.status(200).json({ message: "New OTP sent successfully." });
