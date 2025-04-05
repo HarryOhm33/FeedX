@@ -66,7 +66,7 @@ const Feedback = () => {
   };
 
   if (loading) {
-    return <Loader size="lg" />;
+    return <Loader />;
   }
 
   return (

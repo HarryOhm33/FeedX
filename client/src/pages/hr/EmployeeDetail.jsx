@@ -116,7 +116,7 @@ const EmployeeDetail = () => {
   };
 
   if (loading) {
-    return <Loader size="lg" />;
+    return <Loader />;
   }
 
   if (!employee) {
@@ -139,7 +139,7 @@ const EmployeeDetail = () => {
 
   const renderSessionList = (sessions, isExpired = false) => {
     if (sessionsLoading) {
-      return <Loader size="sm" />;
+      return <Loader />;
     }
 
     if (sessions.length === 0) {

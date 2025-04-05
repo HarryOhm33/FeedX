@@ -85,7 +85,7 @@ const Manager = () => {
   };
 
   if (loading) {
-    return <Loader size="lg" />;
+    return <Loader />;
   }
 
   return (

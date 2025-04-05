@@ -4,6 +4,7 @@ import {
   FaBars,
   FaComment,
   FaTachometerAlt,
+  FaUser,
 } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 
@@ -55,14 +56,14 @@ const ManagerSidebar = ({ isExpanded, setIsExpanded }) => {
                 : "hover:bg-gray-200"
             }`
           }
-          title="Employees"
+          title="Feedback"
         >
           <FaComment size={isExpanded ? 28 : 32} />
           {isExpanded && <span>Feedback</span>}
         </NavLink>
 
-        {/* <NavLink
-          to="/hrDashboard/Managers"
+        <NavLink
+          to="/managerDashboard/Employees"
           className={({ isActive }) =>
             `flex items-center ${
               isExpanded ? "gap-3 p-3" : "justify-center p-2"
@@ -72,11 +73,11 @@ const ManagerSidebar = ({ isExpanded, setIsExpanded }) => {
                 : "hover:bg-gray-200"
             }`
           }
-          title="Managers"
+          title="Employee"
         >
-          <FaUserTie size={isExpanded ? 28 : 32} />
-          {isExpanded && <span>Managers</span>}
-        </NavLink> */}
+          <FaUser size={isExpanded ? 28 : 32} />
+          {isExpanded && <span>Employees</span>}
+        </NavLink>
       </nav>
     </div>
   );

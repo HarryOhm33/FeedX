@@ -46,7 +46,7 @@ const HRSidebar = ({ isExpanded, setIsExpanded }) => {
         </NavLink>
 
         <NavLink
-          to="/hrDashboard/employees"
+          to="/hrDashboard/Employees"
           className={({ isActive }) =>
             `flex items-center ${
               isExpanded ? "gap-3 p-3" : "justify-center p-2"

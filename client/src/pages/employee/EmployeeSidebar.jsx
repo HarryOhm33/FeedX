@@ -55,7 +55,7 @@ const EmployeeSidebar = ({ isExpanded, setIsExpanded }) => {
                 : "hover:bg-gray-200"
             }`
           }
-          title="Employees"
+          title="Feedback"
         >
           <FaComment size={isExpanded ? 28 : 32} />
           {isExpanded && <span>Feedback</span>}

@@ -64,7 +64,7 @@ const ManagerDashboard = () => {
   }, []);
 
   if (authLoading || loading) {
-    return <Loader size="lg" />;
+    return <Loader />;
   }
 
   if (error) {
@@ -79,7 +79,7 @@ const ManagerDashboard = () => {
   }
 
   if (!dashboardData || !dashboardData.data) {
-    return <Loader size="lg" />;
+    return <Loader />;
   }
 
   const {

@@ -53,7 +53,7 @@ const HRDashboard = () => {
     fetchDashboardData();
   }, []);
 
-  if (loading) return <Loader className="pl-10" />;
+  if (loading) return <Loader />;
 
   if (error)
     return (
@@ -65,8 +65,7 @@ const HRDashboard = () => {
       </div>
     );
 
-  if (!dashboardData || !dashboardData.data)
-    return <Loader className="pl-10" />;
+  if (!dashboardData || !dashboardData.data) return <Loader />;
 
   const {
     totalEmployees,
