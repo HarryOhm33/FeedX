@@ -5,13 +5,17 @@ import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../../components/Loader";
-import { Link } from "react-router-dom";
+import Modal from "../../components/Modal";
+import FeedbackForm from "../../components/FeedbackForm";
 
 const FeedbackRequests = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [feedbackRequests, setFeedbackRequests] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]);
   const [completedRequests, setCompletedRequests] = useState([]);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
 
   useEffect(() => {
     const fetchFeedbackRequests = async () => {
@@ -32,25 +36,13 @@ const FeedbackRequests = () => {
           }
         );
 
-        const allRequests = response.data?.feedbackRequests || [];
-        const pending = [];
-        const completed = [];
-
-        allRequests.forEach((request) => {
-          if (request.leftResponders?.includes(user._id)) {
-            pending.push(request);
-          } else if (request.respondedBy?.includes(user._id)) {
-            completed.push(request);
-          }
-        });
-
-        setPendingRequests(pending);
-        setCompletedRequests(completed);
+        setFeedbackRequests(response.data?.feedbackRequests || []);
       } catch (err) {
         toast.error(
           err.response?.data?.message || "Failed to fetch feedback requests"
         );
         console.error("Error fetching feedback requests:", err);
+        setFeedbackRequests([]);
       } finally {
         setLoading(false);
       }
@@ -58,6 +50,52 @@ const FeedbackRequests = () => {
 
     fetchFeedbackRequests();
   }, [user]);
+
+  useEffect(() => {
+    if (user && feedbackRequests.length > 0) {
+      const pending = [];
+      const completed = [];
+
+      feedbackRequests.forEach((request) => {
+        if (request.leftResponders?.includes(user._id)) {
+          pending.push(request);
+        } else if (request.respondedBy?.includes(user._id)) {
+          completed.push(request);
+        }
+      });
+
+      setPendingRequests(pending);
+      setCompletedRequests(completed);
+    } else {
+      setPendingRequests([]);
+      setCompletedRequests([]);
+    }
+  }, [user, feedbackRequests]);
+
+  const handleFeedbackSubmitSuccess = () => {
+    // Refresh the list after successful submission
+    setFeedbackRequests([]); // Clear current data to trigger reload
+    setLoading(true);
+    const token = Cookies.get("markAuth");
+    axios
+      .get("http://localhost:8001/api/feedback/requests", {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        setFeedbackRequests(response.data?.feedbackRequests || []);
+      })
+      .catch((err) => {
+        toast.error(
+          err.response?.data?.message || "Failed to refresh requests"
+        );
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   const getTargetDisplay = (request) => {
     if (request.targetId) {
@@ -111,12 +149,15 @@ const FeedbackRequests = () => {
                       <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full mb-2">
                         Pending
                       </span>
-                      <Link
-                        to={`/feedback/submit/${request._id}`}
+                      <button
+                        onClick={() => {
+                          setSelectedRequest(request);
+                          setShowFeedbackModal(true);
+                        }}
                         className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
                       >
                         Give Feedback
-                      </Link>
+                      </button>
                     </div>
                   </div>
                 </li>
@@ -159,17 +200,9 @@ const FeedbackRequests = () => {
                         </p>
                       </div>
                     </div>
-                    <div className="flex flex-col items-end">
-                      <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full mb-2">
-                        Completed
-                      </span>
-                      <Link
-                        to={`/feedback/view/${request._id}`}
-                        className="px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300"
-                      >
-                        View Feedback
-                      </Link>
-                    </div>
+                    <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                      Completed
+                    </span>
                   </div>
                 </li>
               ))}
@@ -184,6 +217,16 @@ const FeedbackRequests = () => {
           )}
         </div>
       </div>
+
+      {showFeedbackModal && selectedRequest && (
+        <Modal onClose={() => setShowFeedbackModal(false)}>
+          <FeedbackForm
+            targetId={selectedRequest.targetId?._id || selectedRequest._id}
+            onClose={() => setShowFeedbackModal(false)}
+            onSubmitSuccess={handleFeedbackSubmitSuccess}
+          />
+        </Modal>
+      )}
     </div>
   );
 };

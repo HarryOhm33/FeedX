@@ -48,12 +48,13 @@ const feedbackRequestSchema = new mongoose.Schema({
   },
   expiresAt: {
     type: Date,
-    default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+    default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
   },
 });
 
-// Auto-set the targetModel before saving
-feedbackRequestSchema.pre("save", async function (next) {
+// Auto-set `targetModel` and `responderModel`
+feedbackRequestSchema.pre("validate", async function (next) {
+  // Auto-detect targetModel
   if (!this.targetModel) {
     const employeeExists = await Employee.exists({ _id: this.targetId });
     const managerExists = await Manager.exists({ _id: this.targetId });
@@ -63,6 +64,21 @@ feedbackRequestSchema.pre("save", async function (next) {
     else
       return next(new Error("Invalid targetId: No Employee or Manager found."));
   }
+
+  // Auto-detect responderModel from first responder
+  if (!this.responderModel && this.leftResponders.length > 0) {
+    const firstResponder = this.leftResponders[0];
+    const isEmployee = await Employee.exists({ _id: firstResponder });
+    const isManager = await Manager.exists({ _id: firstResponder });
+
+    if (isEmployee) this.responderModel = "Employee";
+    else if (isManager) this.responderModel = "Manager";
+    else
+      return next(
+        new Error("Invalid responderId: No Employee or Manager found.")
+      );
+  }
+
   next();
 });
 

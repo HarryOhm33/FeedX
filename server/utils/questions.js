@@ -1,5 +1,6 @@
+// questions.js
 module.exports = {
-  employeeToemployee: [
+  employeeToEmployee: [
     "How well does your colleague collaborate with the team?",
     "Does your colleague communicate effectively?",
     "How dependable is your colleague in completing tasks on time?",
@@ -7,7 +8,7 @@ module.exports = {
     "What is one area your colleague can improve upon?",
   ],
 
-  employeeToeanager: [
+  employeeToManager: [
     "How well does your manager support your work?",
     "Does your manager provide constructive feedback regularly?",
     "How approachable is your manager when you need help?",
@@ -15,7 +16,7 @@ module.exports = {
     "What suggestions would you offer to your manager for improvement?",
   ],
 
-  managerToemployee: [
+  managerToEmployee: [
     "How effectively does the employee take ownership of tasks?",
     "Does the employee demonstrate problem-solving ability?",
     "How well does the employee communicate with peers and management?",

@@ -5,6 +5,8 @@ import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../../components/Loader";
+import Modal from "../../components/Modal";
+import FeedbackForm from "../../components/FeedbackForm";
 
 const ManagerFeedbackRequests = () => {
   const { user } = useAuth();
@@ -12,6 +14,8 @@ const ManagerFeedbackRequests = () => {
   const [feedbackRequests, setFeedbackRequests] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]);
   const [completedRequests, setCompletedRequests] = useState([]);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
 
   useEffect(() => {
     const fetchFeedbackRequests = async () => {
@@ -53,13 +57,9 @@ const ManagerFeedbackRequests = () => {
       const completed = [];
 
       feedbackRequests.forEach((request) => {
-        // Check if manager is in leftResponders (pending) or respondedBy (completed)
-        const isPending = request.leftResponders?.includes(user._id);
-        const isCompleted = request.respondedBy?.includes(user._id);
-
-        if (isPending) {
+        if (request.leftResponders?.includes(user._id)) {
           pending.push(request);
-        } else if (isCompleted) {
+        } else if (request.respondedBy?.includes(user._id)) {
           completed.push(request);
         }
       });
@@ -72,13 +72,30 @@ const ManagerFeedbackRequests = () => {
     }
   }, [user, feedbackRequests]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader size="lg" />
-      </div>
-    );
-  }
+  const handleFeedbackSubmitSuccess = () => {
+    // Refresh the list after successful submission
+    setFeedbackRequests([]); // Clear current data to trigger reload
+    setLoading(true);
+    const token = Cookies.get("markAuth");
+    axios
+      .get("http://localhost:8001/api/feedback/requests", {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        setFeedbackRequests(response.data?.feedbackRequests || []);
+      })
+      .catch((err) => {
+        toast.error(
+          err.response?.data?.message || "Failed to refresh requests"
+        );
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   const getTargetDisplay = (request) => {
     if (request.targetId) {
@@ -87,11 +104,19 @@ const ManagerFeedbackRequests = () => {
     return "General Feedback";
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader size="lg" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white p-4 md:p-6 md:ml-[50px] mt-16">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">
-          Your Feedback Requests
+          Manager Feedback Requests
         </h1>
 
         <div className="mb-8">
@@ -105,28 +130,31 @@ const ManagerFeedbackRequests = () => {
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <p className="font-medium">{getTargetDisplay(request)}</p>
-                      <p className="text-sm text-gray-600">
-                        Requested by: {request.requestedBy?.name || "Unknown"}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        Session: {request.sessionName || "No session specified"}
-                      </p>
-                      {request.expiresAt && (
-                        <p className="text-sm text-gray-500">
-                          Due: {new Date(request.expiresAt).toLocaleString()}
+                      <div className="flex flex-wrap gap-x-4">
+                        <p className="text-sm text-gray-600">
+                          Requested by: {request.requestedBy?.name || "Unknown"}
                         </p>
-                      )}
+                        <p className="text-sm text-gray-500">
+                          Session:{" "}
+                          {request.sessionName || "No session specified"}
+                        </p>
+                        {request.expiresAt && (
+                          <p className="text-sm text-gray-500">
+                            Due: {new Date(request.expiresAt).toLocaleString()}
+                          </p>
+                        )}
+                      </div>
                     </div>
                     <div className="flex flex-col items-end">
                       <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full mb-2">
                         Pending
                       </span>
                       <button
-                        className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
                         onClick={() => {
-                          // Add your feedback submission logic here
-                          toast.info("Redirecting to feedback form...");
+                          setSelectedRequest(request);
+                          setShowFeedbackModal(true);
                         }}
+                        className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
                       >
                         Give Feedback
                       </button>
@@ -189,6 +217,16 @@ const ManagerFeedbackRequests = () => {
           )}
         </div>
       </div>
+
+      {showFeedbackModal && selectedRequest && (
+        <Modal onClose={() => setShowFeedbackModal(false)}>
+          <FeedbackForm
+            targetId={selectedRequest.targetId?._id || selectedRequest._id}
+            onClose={() => setShowFeedbackModal(false)}
+            onSubmitSuccess={handleFeedbackSubmitSuccess}
+          />
+        </Modal>
+      )}
     </div>
   );
 };

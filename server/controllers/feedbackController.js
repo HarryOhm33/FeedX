@@ -65,7 +65,6 @@ module.exports.submitFeedback = async (req, res) => {
   const { targetId, responses, rating } = req.body;
   const giverId = req.user._id;
 
-  // Step 1: Find active feedback request
   const feedbackRequest = await FeedbackRequest.findOne({
     targetId,
     expiresAt: { $gte: new Date() },
@@ -78,16 +77,14 @@ module.exports.submitFeedback = async (req, res) => {
     });
   }
 
-  // Step 2: Check if giver is allowed to respond
   if (!feedbackRequest.leftResponders.includes(giverId)) {
     return res.status(403).json({
       success: false,
       message:
-        "You are not authorized to submit feedback or already responded.",
+        "You are not authorized to submit feedback or have already responded.",
     });
   }
 
-  // Step 3: Determine roles
   const giverModel = (await Employee.exists({ _id: giverId }))
     ? "Employee"
     : "Manager";
@@ -105,10 +102,13 @@ module.exports.submitFeedback = async (req, res) => {
     });
   }
 
-  // Step 4: Validate each response has question & answer
   for (let i = 0; i < expectedQuestions.length; i++) {
+    const expected = expectedQuestions[i].trim().toLowerCase();
+    const received = responses[i]?.question?.trim().toLowerCase();
+
     if (
-      responses[i].question !== expectedQuestions[i] ||
+      !received ||
+      expected !== received ||
       typeof responses[i].answer !== "string"
     ) {
       return res.status(400).json({
@@ -118,7 +118,6 @@ module.exports.submitFeedback = async (req, res) => {
     }
   }
 
-  // Step 5: Create and save feedback
   const feedback = new Feedback({
     feedbackRequestId: feedbackRequest._id,
     giverId,
@@ -131,7 +130,6 @@ module.exports.submitFeedback = async (req, res) => {
 
   await feedback.save();
 
-  // Step 6: Update feedbackRequest status
   feedbackRequest.leftResponders = feedbackRequest.leftResponders.filter(
     (id) => id.toString() !== giverId.toString()
   );
@@ -143,7 +141,7 @@ module.exports.submitFeedback = async (req, res) => {
 
   await feedbackRequest.save();
 
-  res.status(201).json({
+  return res.status(201).json({
     success: true,
     message: "Feedback submitted successfully",
     feedback,
@@ -207,8 +205,8 @@ module.exports.getFeedbackForm = async (req, res) => {
   if (await Employee.exists({ _id: giverId })) giverModel = "employee";
   else if (await Manager.exists({ _id: giverId })) giverModel = "manager";
 
-  if (await Employee.exists({ _id: targetId })) targetModel = "employee";
-  else if (await Manager.exists({ _id: targetId })) targetModel = "manager";
+  if (await Employee.exists({ _id: targetId })) targetModel = "Employee";
+  else if (await Manager.exists({ _id: targetId })) targetModel = "Manager";
 
   if (!giverModel || !targetModel) {
     return res.status(404).json({
@@ -217,7 +215,7 @@ module.exports.getFeedbackForm = async (req, res) => {
     });
   }
 
-  const roleKey = `${giverModel.toLowerCase()}To${targetModel.toLowerCase()}`;
+  const roleKey = `${giverModel}To${targetModel}`;
   const questionSet = questions[roleKey];
 
   if (!questionSet) {
