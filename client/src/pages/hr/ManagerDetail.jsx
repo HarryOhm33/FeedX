@@ -111,11 +111,7 @@ const ManagerDetail = () => {
 
   const renderSessionList = (sessions, isExpired = false) => {
     if (sessionsLoading) {
-      return (
-        <div className="flex justify-center py-4">
-          <Loader size="sm" />
-        </div>
-      );
+      return <Loader size="sm" />;
     }
 
     if (sessions.length === 0) {
@@ -171,11 +167,7 @@ const ManagerDetail = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-white">
-        <Loader size="lg" />
-      </div>
-    );
+    return <Loader size="lg" />;
   }
 
   if (!manager) {

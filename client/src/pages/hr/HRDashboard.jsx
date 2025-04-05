@@ -53,12 +53,7 @@ const HRDashboard = () => {
     fetchDashboardData();
   }, []);
 
-  if (loading)
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader className="pl-10" />
-      </div>
-    );
+  if (loading) return <Loader className="pl-10" />;
 
   if (error)
     return (
@@ -71,11 +66,7 @@ const HRDashboard = () => {
     );
 
   if (!dashboardData || !dashboardData.data)
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader className="pl-10" />
-      </div>
-    );
+    return <Loader className="pl-10" />;
 
   const {
     totalEmployees,

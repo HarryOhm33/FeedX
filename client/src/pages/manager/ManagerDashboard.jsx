@@ -64,11 +64,7 @@ const ManagerDashboard = () => {
   }, []);
 
   if (authLoading || loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <Loader size="lg" />
-      </div>
-    );
+    return <Loader size="lg" />;
   }
 
   if (error) {
@@ -83,11 +79,7 @@ const ManagerDashboard = () => {
   }
 
   if (!dashboardData || !dashboardData.data) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <Loader size="lg" />
-      </div>
-    );
+    return <Loader size="lg" />;
   }
 
   const {
