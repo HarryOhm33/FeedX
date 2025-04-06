@@ -62,90 +62,150 @@ module.exports.triggerFeedback = async (req, res) => {
 
 // ✅ Submit Feedback (Only if feedback was requested)
 module.exports.submitFeedback = async (req, res) => {
-  const { targetId, responses, rating } = req.body;
-  const giverId = req.user._id;
+  try {
+    const { targetId, objectiveResponses, subjectiveResponses } = req.body;
+    const giverId = req.user._id;
 
-  const feedbackRequest = await FeedbackRequest.findOne({
-    targetId,
-    expiresAt: { $gte: new Date() },
-  });
+    // Validate required fields
+    if (!targetId || !objectiveResponses || !subjectiveResponses) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Missing required fields: targetId, objectiveResponses, or subjectiveResponses",
+      });
+    }
 
-  if (!feedbackRequest) {
-    return res.status(400).json({
-      success: false,
-      message: "No active feedback request for this person.",
+    // Check feedback request validity
+    const feedbackRequest = await FeedbackRequest.findOne({
+      targetId,
+      expiresAt: { $gte: new Date() },
     });
-  }
 
-  if (!feedbackRequest.leftResponders.includes(giverId)) {
-    return res.status(403).json({
-      success: false,
-      message:
-        "You are not authorized to submit feedback or have already responded.",
-    });
-  }
+    if (!feedbackRequest) {
+      return res.status(400).json({
+        success: false,
+        message: "No active feedback request found for this user",
+      });
+    }
 
-  const giverModel = (await Employee.exists({ _id: giverId }))
-    ? "Employee"
-    : "Manager";
-  const receiverModel = (await Employee.exists({ _id: targetId }))
-    ? "Employee"
-    : "Manager";
+    // Check authorization
+    if (!feedbackRequest.leftResponders.some((id) => id.equals(giverId))) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "You are not authorized to submit feedback or have already responded",
+      });
+    }
 
-  const roleKey = `${giverModel.toLowerCase()}To${receiverModel}`;
-  const expectedQuestions = questionsByRole[roleKey];
+    // Determine user roles using dynamic reference pattern
+    const [giverEmployee, giverManager, targetEmployee, targetManager] =
+      await Promise.all([
+        Employee.findById(giverId),
+        Manager.findById(giverId),
+        Employee.findById(targetId),
+        Manager.findById(targetId),
+      ]);
 
-  if (!expectedQuestions || responses.length !== expectedQuestions.length) {
-    return res.status(400).json({
-      success: false,
-      message: `Responses must match the number of predefined questions for ${roleKey}.`,
-    });
-  }
+    const giverModel = giverEmployee
+      ? "Employee"
+      : giverManager
+      ? "Manager"
+      : null;
+    const receiverModel = targetEmployee
+      ? "Employee"
+      : targetManager
+      ? "Manager"
+      : null;
 
-  for (let i = 0; i < expectedQuestions.length; i++) {
-    const expected = expectedQuestions[i].trim().toLowerCase();
-    const received = responses[i]?.question?.trim().toLowerCase();
+    if (!giverModel || !receiverModel) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid giver or receiver role",
+      });
+    }
+
+    const roleKey = `${giverModel.toLowerCase()}To${receiverModel}`;
+    const expectedQuestions = questionsByRole[roleKey];
+
+    if (!expectedQuestions) {
+      return res.status(400).json({
+        success: false,
+        message: "No question set defined for this feedback relationship",
+      });
+    }
+
+    // Validate response counts match expected questions
+    const expectedObjectiveCount = expectedQuestions.objective.length;
+    const expectedSubjectiveCount = expectedQuestions.subjective.length;
 
     if (
-      !received ||
-      expected !== received ||
-      typeof responses[i].answer !== "string"
+      Object.keys(objectiveResponses).length !== expectedObjectiveCount ||
+      subjectiveResponses.length !== expectedSubjectiveCount
     ) {
       return res.status(400).json({
         success: false,
-        message: `Invalid or mismatched response at index ${i}.`,
+        message: `Expected ${expectedObjectiveCount} objective and ${expectedSubjectiveCount} subjective responses`,
       });
     }
+
+    // Prepare responses array for schema
+    const formattedResponses = [
+      // Format objective responses (ratings 1-5)
+      ...expectedQuestions.objective.map((question) => ({
+        question,
+        answer: objectiveResponses[question].toString(),
+        type: "objective",
+      })),
+
+      // Format subjective responses (text answers)
+      ...expectedQuestions.subjective.map((question, index) => ({
+        question,
+        answer: subjectiveResponses[index].answer,
+        type: "subjective",
+      })),
+    ];
+
+    // Create feedback document
+    const feedback = new Feedback({
+      feedbackRequestId: feedbackRequest._id,
+      receiverId: targetId,
+      receiverModel,
+      giverId,
+      giverModel,
+      responses: formattedResponses,
+      roleRelation: roleKey,
+    });
+
+    // Update feedback request
+    feedbackRequest.leftResponders.pull(giverId);
+    feedbackRequest.respondedBy.push({
+      responderId: giverId,
+      respondedAt: new Date(),
+    });
+
+    // Save both in transaction
+    await Promise.all([feedback.save(), feedbackRequest.save()]);
+
+    return res.status(201).json({
+      success: true,
+      message: "Feedback submitted successfully",
+      data: {
+        feedbackId: feedback._id,
+        receiver: {
+          id: targetId,
+          model: receiverModel,
+        },
+        questionsAnswered: formattedResponses.length,
+      },
+    });
+  } catch (error) {
+    console.error("Feedback submission error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error while processing feedback",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
   }
-
-  const feedback = new Feedback({
-    feedbackRequestId: feedbackRequest._id,
-    giverId,
-    giverModel,
-    receiverId: targetId,
-    receiverModel,
-    responses,
-    rating,
-  });
-
-  await feedback.save();
-
-  feedbackRequest.leftResponders = feedbackRequest.leftResponders.filter(
-    (id) => id.toString() !== giverId.toString()
-  );
-
-  feedbackRequest.respondedBy.push({
-    responderId: giverId,
-    respondedAt: new Date(),
-  });
-
-  await feedbackRequest.save();
-
-  return res.status(201).json({
-    success: true,
-    message: "Feedback submitted successfully",
-    feedback,
-  });
 };
 
 // ✅ Get Pending Feedback Requests (For Dashboard Notifications)
@@ -196,40 +256,72 @@ module.exports.getFeedbackAnalytics = async (req, res) => {
 };
 
 module.exports.getFeedbackForm = async (req, res) => {
-  const giverId = req.user._id;
-  const targetId = req.params.targetId;
+  try {
+    const giverId = req.user._id;
+    const targetId = req.params.targetId;
 
-  let giverModel = null;
-  let targetModel = null;
+    // Validate input
+    if (!giverId || !targetId) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required parameters",
+      });
+    }
 
-  if (await Employee.exists({ _id: giverId })) giverModel = "employee";
-  else if (await Manager.exists({ _id: giverId })) giverModel = "manager";
+    // Determine user roles
+    let giverModel = null;
+    let targetModel = null;
 
-  if (await Employee.exists({ _id: targetId })) targetModel = "Employee";
-  else if (await Manager.exists({ _id: targetId })) targetModel = "Manager";
+    // Check both collections for both users (more flexible approach)
+    const [isGiverEmployee, isGiverManager] = await Promise.all([
+      Employee.exists({ _id: giverId }),
+      Manager.exists({ _id: giverId }),
+    ]);
 
-  if (!giverModel || !targetModel) {
-    return res.status(404).json({
+    const [isTargetEmployee, isTargetManager] = await Promise.all([
+      Employee.exists({ _id: targetId }),
+      Manager.exists({ _id: targetId }),
+    ]);
+
+    if (isGiverEmployee) giverModel = "employee";
+    else if (isGiverManager) giverModel = "manager";
+
+    if (isTargetEmployee) targetModel = "Employee";
+    else if (isTargetManager) targetModel = "Manager";
+
+    // Validate roles were determined
+    if (!giverModel || !targetModel) {
+      return res.status(404).json({
+        success: false,
+        message: "Giver or target user not found or invalid role",
+      });
+    }
+
+    const roleKey = `${giverModel}To${targetModel}`;
+    const questionSet = questions[roleKey];
+
+    // Validate question set exists
+    if (!questionSet) {
+      return res.status(400).json({
+        success: false,
+        message: "No question set defined for this feedback relationship",
+      });
+    }
+
+    // Return structured response with separate question types
+    res.json({
+      success: true,
+      roleRelation: roleKey,
+      objectiveQuestions: questionSet.objective || [],
+      subjectiveQuestions: questionSet.subjective || [],
+    });
+  } catch (error) {
+    console.error("Error in getFeedbackForm:", error);
+    res.status(500).json({
       success: false,
-      message: "Giver or target user not found.",
+      message: "Internal server error while fetching feedback form",
     });
   }
-
-  const roleKey = `${giverModel}To${targetModel}`;
-  const questionSet = questions[roleKey];
-
-  if (!questionSet) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid feedback relationship.",
-    });
-  }
-
-  res.json({
-    success: true,
-    roleRelation: roleKey,
-    questions: questionSet,
-  });
 };
 
 // ✅ Controller to get all sessions for a certain targetId

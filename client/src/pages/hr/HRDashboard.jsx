@@ -290,9 +290,7 @@ const HRDashboard = () => {
                   Total Feedback
                 </p>
                 <h3 className="text-2xl font-bold text-cyan-800 mt-1">
-                  {feedbackStats.positive +
-                    feedbackStats.neutral +
-                    feedbackStats.negative}
+                  {feedbackStats.total}
                 </h3>
               </div>
               <div className="p-3 rounded-lg bg-blue-50 text-blue-600">
@@ -369,7 +367,12 @@ const HRDashboard = () => {
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="text-center">
                   <p className="text-2xl font-bold text-cyan-700">
-                    {Math.round((goalStats.completed / goalStats.total) * 100)}%
+                    {goalStats.total > 0
+                      ? Math.round(
+                          (goalStats.completed / goalStats.total) * 100
+                        )
+                      : 0}
+                    %
                   </p>
                   <p className="text-xs text-cyan-500">Completion</p>
                 </div>
@@ -425,20 +428,17 @@ const HRDashboard = () => {
                 </div>
                 <div>
                   <h3 className="font-medium text-cyan-800">
-                    {topPerformer.name || "anonymous"}
+                    {topPerformer.name}
                   </h3>
                   <p className="text-sm text-cyan-600 mb-2">
-                    Highest goal completion rate
+                    Highest combined performance score
                   </p>
                   <div className="flex items-center space-x-2">
                     <span className="px-2 py-1 bg-cyan-50 text-cyan-700 text-xs rounded-full">
-                      {topPerformer.completed} goals completed
+                      Avg Score: {topPerformer.avgFeedbackScore}
                     </span>
                     <span className="px-2 py-1 bg-teal-50 text-teal-700 text-xs rounded-full">
-                      {Math.round(
-                        (topPerformer.completed / goalStats.total) * 100
-                      )}
-                      % success
+                      Combined: {topPerformer.combinedScore}
                     </span>
                   </div>
                 </div>
@@ -457,7 +457,9 @@ const HRDashboard = () => {
               </span>
             </div>
             <div className="bg-cyan-50 p-4 rounded-lg border border-cyan-200">
-              <p className="text-cyan-700 leading-relaxed">{aiInsights}</p>
+              <p className="text-cyan-700 leading-relaxed whitespace-pre-line">
+                {aiInsights}
+              </p>
             </div>
           </div>
         </div>

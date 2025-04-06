@@ -13,6 +13,8 @@ const employeeSchema = new mongoose.Schema(
     },
     organisation: { type: String, required: true },
     organisationId: { type: String, required: true },
+    autoTriggerFeedback: { type: Boolean, default: false },
+    autoTriggerDate: { type: Date, default: null }, // last trigger date
     isVerified: { type: Boolean, default: false },
   },
   { timestamps: true }
