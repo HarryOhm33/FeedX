@@ -24,7 +24,7 @@ import Login from "./pages/Login";
 import EmployeeDetailsM from "./pages/manager/EmployeeDetailsM";
 import EmployeeM from "./pages/manager/EmployeeM";
 import Goals from "./pages/manager/Goals";
-import ManagerDashboard from "./pages/manager/managerDashboard";
+import ManagerDashboard from "./pages/manager/ManagerDashboard";
 import ManagerFeedbackRequests from "./pages/manager/ManagerFeedBackReq";
 import ProfileSection from "./pages/ProfileSection";
 import Signup from "./pages/Signup";
