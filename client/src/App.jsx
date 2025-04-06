@@ -4,7 +4,7 @@ import Navbar from "./components/Navbar";
 import NotFound from "./components/NotFound";
 import ProtectedAuth from "./components/ProtectedAuth";
 import ProtectedRoute from "./components/ProtectedRoute";
-import WhyFeedX from "./components/WhyFeedx";
+import WhyFeedX from "./pages/WhyFeedX";
 import { AuthProvider } from "./context/AuthContext";
 import EmployeeLayout from "./layouts/EmployeeLayout";
 import HRLayout from "./layouts/HRLayout";

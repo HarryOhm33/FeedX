@@ -16,12 +16,12 @@ const features = [
 
 const WhyFeedX = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-200 to-green-300 px-4 sm:px-6 py-20 text-gray-800">
-      <div className="max-w-5xl mx-auto text-center ">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white drop-shadow-lg mb-4">
+    <div className="min-h-screen bg-gray-50 px-4 sm:px-6 py-20 text-gray-800">
+      <div className="max-w-5xl mx-auto text-center">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 drop-shadow-sm mb-4">
           Why Choose FeedX?
         </h1>
-        <p className="text-base sm:text-lg text-white/90 mb-10">
+        <p className="text-base sm:text-lg text-gray-600 mb-10">
           Discover how FeedX transforms traditional employee feedback into a
           powerful, engaging and insightful experience.
         </p>
@@ -29,7 +29,7 @@ const WhyFeedX = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="bg-white/80 rounded-2xl shadow-lg p-4 sm:p-6 flex items-start gap-4 hover:scale-[1.02] transition-all"
+              className="bg-white rounded-lg shadow-sm p-4 sm:p-6 flex items-start gap-4 hover:shadow-md transition-all"
             >
               <CheckCircle className="text-green-600 mt-1" size={24} />
               <p className="text-gray-700 font-medium text-sm sm:text-base">
