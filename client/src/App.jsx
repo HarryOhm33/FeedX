@@ -10,7 +10,7 @@ import EmployeeLayout from "./layouts/EmployeeLayout";
 import HRLayout from "./layouts/HRLayout";
 import ManagerLayout from "./layouts/ManagerLayout";
 import Techdocx from "./pages/Docs";
-import EmployeeDashboard from "./pages/employee/employeeDashboard";
+import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
 import FeedbackRequests from "./pages/employee/FeedbackRequests";
 import GoalE from "./pages/employee/GoalE";
 import Home from "./pages/Home";
