@@ -21,23 +21,18 @@ AI-powered workforce management for modern businesses
 
 2. **Configure Environment(Backend)**
    ```bash
-ATOM_HR_BASE_URL="https://api.atomhr.com/v1"
+   ATOM_HR_BASE_URL="https://api.atomhr.com/v1"
+   JWT_SECRET="your_jwt_signing_secret_here"
 
-JWT_SECRET="your_jwt_signing_secret_here"
+   MONGO_URL="mongodb+srv://user:password@cluster.mongodb.net/otp_db?retryWrites=true&w=majority"
 
-MONGO_URL="mongodb+srv://user:password@cluster.mongodb.net/otp_db?retryWrites=true&w=majority"
+   EMAIL_USER="your_email@gmail.com"
+   EMAIL_PASSWORD="your_app_specific_password"
 
-EMAIL_USER="your_email@gmail.com"
-EMAIL_PASSWORD="your_app_specific_password"
+   GEMINI_API_KEY="your_gemini_api_key_here"
 
-GEMINI_API_KEY="your_gemini_api_key_here"
-GEMINI_MODEL="gemini-pro" # Default model
 
-3. **Configure Environment(frontend)**
+2. **Configure Environment(frontend)**
    ```bash
-REACT_APP_API_BASE_URL="https://api.yourdomain.com/v1"
-VITE_API_KEY="YOUR_VITE_API_KEY"
-
-3. **Access**
-Frontend: http://localhost:5173
-Backend API: http://localhost:5000
+   REACT_APP_API_BASE_URL="https://api.yourdomain.com/v1"
+   VITE_API_KEY="YOUR_VITE_API_KEY"
