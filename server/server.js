@@ -4,7 +4,8 @@ if (process.env.NODE_ENV !== "production") {
 
 const connectDB = require("./config/db");
 connectDB();
-require("./utils/cronJobs");
+require("./utils/NotifJob");
+require("./utils/autoFeedback");
 
 const express = require("express");
 const app = express();

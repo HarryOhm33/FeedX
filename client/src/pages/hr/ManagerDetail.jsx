@@ -18,6 +18,7 @@ const ManagerDetail = () => {
     expired: [],
   });
   const [sessionsLoading, setSessionsLoading] = useState(false);
+  const [autoFeedbackLoading, setAutoFeedbackLoading] = useState(false);
 
   useEffect(() => {
     const fetchManager = async () => {
@@ -100,6 +101,46 @@ const ManagerDetail = () => {
     fetchManager();
     fetchFeedbackSessions();
   }, [id, navigate]);
+
+  const toggleAutoFeedback = async (enable) => {
+    try {
+      setAutoFeedbackLoading(true);
+      const token = Cookies.get("markAuth");
+      if (!token) {
+        toast.error("Authentication required. Please login again.");
+        return;
+      }
+
+      await axios.put(
+        `http://localhost:8001/api/hr/toggle-auto-feedback/${id}`,
+        { enable },
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Update local state
+      setManager((prev) => ({
+        ...prev,
+        autoTriggerFeedback: enable,
+        autoTriggerDate: enable ? new Date().toISOString() : null,
+      }));
+
+      toast.success(
+        `Auto feedback ${enable ? "enabled" : "disabled"} successfully`
+      );
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "Failed to update auto feedback setting"
+      );
+      console.error("Error toggling auto feedback:", err);
+    } finally {
+      setAutoFeedbackLoading(false);
+    }
+  };
 
   const handleBackClick = () => {
     navigate(-1);
@@ -210,13 +251,55 @@ const ManagerDetail = () => {
             </svg>
             Back to Managers
           </button>
-          <button
-            onClick={() => setShowTriggerFeedback(true)}
-            className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition-colors"
-          >
-            Trigger Feedback
-          </button>
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center">
+              <span className="mr-2 text-sm font-medium text-gray-700">
+                Auto Feedback
+              </span>
+              <button
+                type="button"
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                  manager.autoTriggerFeedback ? "bg-blue-600" : "bg-gray-200"
+                }`}
+                onClick={() => toggleAutoFeedback(!manager.autoTriggerFeedback)}
+                disabled={autoFeedbackLoading}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    manager.autoTriggerFeedback
+                      ? "translate-x-6"
+                      : "translate-x-1"
+                  }`}
+                />
+              </button>
+            </div>
+            <button
+              onClick={() => setShowTriggerFeedback(true)}
+              className={`bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition-colors ${
+                manager.autoTriggerFeedback
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+              }`}
+              disabled={manager.autoTriggerFeedback}
+            >
+              Trigger Feedback
+            </button>
+          </div>
         </div>
+
+        {manager.autoTriggerFeedback && (
+          <div className="mb-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-700">
+            <p>
+              Auto feedback is enabled. Disable it to trigger feedback manually.
+            </p>
+            {manager.autoTriggerDate && (
+              <p className="mt-1 text-xs text-blue-600">
+                Last updated:{" "}
+                {new Date(manager.autoTriggerDate).toLocaleString()}
+              </p>
+            )}
+          </div>
+        )}
 
         <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mb-8">
           <div className="p-6 border-b border-gray-200 bg-purple-50">

@@ -274,3 +274,48 @@ module.exports.getManagerList = async (req, res) => {
 
   res.status(200).json({ managers });
 };
+
+module.exports.toggleAutoFeedback = async (req, res) => {
+  const { userId } = req.params;
+  const { enable } = req.body;
+
+  if (req.user.role !== "hr") {
+    return res.status(403).json({
+      success: false,
+      message: "Only HR can toggle auto feedback.",
+    });
+  }
+
+  // Try to find user in Employee first
+  let user = await Employee.findById(userId);
+  let model = "Employee";
+
+  if (!user) {
+    user = await Manager.findById(userId);
+    model = "Manager";
+  }
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+
+  user.autoTriggerFeedback = enable;
+  user.autoTriggerDate = enable ? new Date() : null;
+
+  await user.save();
+
+  res.json({
+    success: true,
+    message: `Auto feedback ${enable ? "enabled" : "disabled"} successfully.`,
+    user: {
+      _id: user._id,
+      name: user.name,
+      role: model,
+      autoTriggerFeedback: user.autoTriggerFeedback,
+      autoTriggerDate: user.autoTriggerDate,
+    },
+  });
+};

@@ -1,4 +1,3 @@
-// feedbackQuestions.js
 module.exports = {
   employeeToEmployee: {
     objective: [
@@ -7,8 +6,8 @@ module.exports = {
       "How effective is your colleague's communication? (1-5)",
     ],
     subjective: [
-      "What is one strength you admire in your colleague?",
-      "What is one area your colleague can improve upon?",
+      "Have you faced any issues working with this colleague? (Type 'No' if not)",
+      "Do you have any suggestions to help your colleague improve? (Type 'No' if not)",
     ],
   },
 
@@ -19,8 +18,8 @@ module.exports = {
       "How effective is your manager's feedback? (1-5)",
     ],
     subjective: [
-      "What do you appreciate most about your manager?",
-      "What suggestions would you offer to your manager for improvement?",
+      "Have you faced any issues working under this manager? (Type 'No' if not)",
+      "Do you have any suggestions for your manager's improvement? (Type 'No' if not)",
     ],
   },
 
@@ -31,8 +30,8 @@ module.exports = {
       "How reliable is the employee in meeting deadlines? (1-5)",
     ],
     subjective: [
-      "What is one thing the employee is doing really well?",
-      "Where could the employee improve to contribute more effectively?",
+      "Have you faced any issues while managing this employee? (Type 'No' if not)",
+      "Do you have any suggestions to help the employee improve? (Type 'No' if not)",
     ],
   },
 };

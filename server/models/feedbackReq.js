@@ -16,7 +16,7 @@ const feedbackRequestSchema = new mongoose.Schema({
   requestedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "HR",
-    required: true,
+    default: null,
   },
   sessionName: {
     type: String,
