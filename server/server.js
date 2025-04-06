@@ -30,7 +30,7 @@ const corsOptions = {
   origin: [
     "http://localhost:5173",
     "http://localhost:5174",
-    "https://feedxmarkii.netlify.app/",
+    "https://feedxmarkii.netlify.app",
   ], // Tumhare frontend origins
   credentials: true, // Cookies aur auth headers allow karne ke liye
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Sab methods allow
