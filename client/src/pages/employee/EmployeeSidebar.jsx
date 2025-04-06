@@ -65,6 +65,23 @@ const EmployeeSidebar = ({ isExpanded, setIsExpanded }) => {
         </NavLink>
 
         <NavLink
+          to="/employeeDashboard/Goals"
+          className={({ isActive }) =>
+            `flex items-center ${
+              isExpanded ? "gap-3 p-3" : "justify-center p-2"
+            } rounded-md transition font-medium ${
+              isActive
+                ? "bg-gradient-to-r from-teal-500 to-blue-600 text-white shadow-lg"
+                : "hover:bg-gray-200"
+            }`
+          }
+          title="Goals"
+        >
+          <FaFlagCheckered size={isExpanded ? 28 : 32} />
+          {isExpanded && <span>Goals</span>}
+        </NavLink>
+
+        <NavLink
           to="/employeeDashboard/Profile"
           className={({ isActive }) =>
             `flex items-center ${

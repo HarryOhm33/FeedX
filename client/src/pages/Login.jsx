@@ -7,6 +7,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const { login } = useAuth();
@@ -145,12 +146,12 @@ const Login = () => {
 
           <p className="text-center text-sm text-gray-600">
             Don’t have an account?{" "}
-            <a
-              href="/signup"
+            <Link
+              to="/signup"
               className="text-green-400 hover:text-blue-700 font-medium"
             >
               Sign up
-            </a>
+            </Link>
           </p>
         </form>
       </div>

@@ -23,6 +23,7 @@ const goalRoute = require("./routes/goalRoute");
 const managerRoute = require("./routes/managerRoute");
 const employeeRoute = require("./routes/employeeRoute");
 const notificationRoute = require("./routes/notificationRoute");
+const selfAssessmentRoutes = require("./routes/selfAssessmentRoutes");
 
 const corsOptions = {
   origin: ["http://localhost:5173", "http://localhost:5174"], // Tumhare frontend origins
@@ -49,6 +50,7 @@ app.use("/api/goal", goalRoute);
 app.use("/api/manager", managerRoute);
 app.use("/api/employee", employeeRoute);
 app.use("/api/notif", notificationRoute);
+app.use("/api/self", selfAssessmentRoutes);
 
 // 404 Handler
 app.all("*", (req, res, next) => {

@@ -93,7 +93,10 @@ const Feedback = () => {
                 >
                   <div>
                     <h3 className="font-medium text-gray-800">
-                      Feedback from: {feedback.giverId?.name || "Anonymous"}
+                      Feedback from: {feedback.giverId?.name || "Anonymous"} [
+                      {feedback.giverId?.role.charAt(0).toUpperCase() +
+                        feedback.giverId?.role.slice(1)}
+                      ]
                     </h3>
                     <p className="text-sm text-gray-500">
                       Submitted:{" "}

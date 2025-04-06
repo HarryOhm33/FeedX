@@ -253,7 +253,7 @@ module.exports.getFeedbacksByRequestId = async (req, res) => {
 
   const feedbacks = await Feedback.find({ feedbackRequestId }).populate({
     path: "giverId",
-    select: "name", // fields to include
+    select: "name role", // fields to include
     strictPopulate: false, // allows dynamic refPath
   });
 
