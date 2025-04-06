@@ -310,10 +310,11 @@ const ManagerDashboard = () => {
                   Total Feedback
                 </p>
                 <h3 className="text-2xl font-bold text-cyan-800 mt-1">
-                  {feedbackStats.positive +
-                    feedbackStats.neutral +
-                    feedbackStats.negative}
+                  {feedbackStats.totalFeedback}
                 </h3>
+                <p className="text-xs text-cyan-500 mt-1">
+                  Avg. Score: {feedbackStats.avgFeedbackScore}
+                </p>
               </div>
               <div className="p-3 rounded-lg bg-blue-50 text-blue-600">
                 <svg
@@ -482,7 +483,13 @@ const ManagerDashboard = () => {
               </span>
             </div>
             <div className="bg-cyan-50 p-4 rounded-lg border border-cyan-200">
-              <p className="text-cyan-700 leading-relaxed">{aiInsights}</p>
+              <div className="prose prose-sm text-cyan-700">
+                {aiInsights.split("\n\n").map((paragraph, index) => (
+                  <p key={index} className="mb-3 last:mb-0">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
             </div>
           </div>
         </div>

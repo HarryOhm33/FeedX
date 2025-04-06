@@ -16,13 +16,18 @@ module.exports.getEmployeeDashboardData = async (req, res) => {
   const goalsCompleted = goals.filter((g) => g.status === "Completed");
   const goalsPending = goals.filter((g) => g.status !== "Completed");
 
-  const goalCompletionRate = goals.length
-    ? (goalsCompleted.length / goals.length) * 100
-    : 0;
+  const goalCompletionRate =
+    goals.length > 0
+      ? ((goalsCompleted.length / goals.length) * 100).toFixed(2)
+      : "0.00";
 
-  const averageRating = feedbacks.length
-    ? feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length
-    : 0;
+  const averageRating =
+    feedbacks.length > 0
+      ? (
+          feedbacks.reduce((sum, f) => sum + (f.rating || 0), 0) /
+          feedbacks.length
+        ).toFixed(2)
+      : "0.00";
 
   const recentGoals = goals.slice(-5).map((goal) => ({
     title: goal.title,
@@ -30,32 +35,25 @@ module.exports.getEmployeeDashboardData = async (req, res) => {
     deadline: goal.deadline,
   }));
 
-  const recentFeedback = feedbacks.slice(-5).map((feedback) => ({
-    rating: feedback.rating,
-    responses: feedback.responses
-      .map((r) => `${r.question}: ${r.answer}`)
-      .join("; "),
-  }));
-
   const data = {
     goalsAssigned: goals.length,
     goalsCompleted: goalsCompleted.length,
     goalsPending: goalsPending.length,
-    goalCompletionRate: goalCompletionRate.toFixed(2) + "%",
+    goalCompletionRate: `${goalCompletionRate}%`,
     feedbackStats: {
       totalFeedback: feedbacks.length,
       positive: feedbacks.filter((f) => f.rating >= 4).length,
       neutral: feedbacks.filter((f) => f.rating === 3).length,
       negative: feedbacks.filter((f) => f.rating <= 2).length,
-      averageRating: averageRating.toFixed(2),
+      averageRating,
     },
     recentGoals,
-    recentFeedback,
   };
 
   const prompt = `
-You are an AI performance coach. Here's an employee's performance summary:
+You are an AI performance coach. Analyze the following employee performance data and provide insights in two parts.
 
+### 1. Performance Summary (Max 2 sentences, simple and clear):
 - Goals Assigned: ${data.goalsAssigned}
 - Goals Completed: ${data.goalsCompleted}
 - Goals Pending: ${data.goalsPending}
@@ -67,25 +65,11 @@ You are an AI performance coach. Here's an employee's performance summary:
   - Negative: ${data.feedbackStats.negative}
   - Average Rating: ${data.feedbackStats.averageRating}
 
-Recent Goals:
-${recentGoals
-  .map(
-    (g, i) =>
-      `  ${i + 1}. ${g.title} - ${
-        g.status
-      } (Deadline: ${g.deadline.toDateString()})`
-  )
-  .join("\n")}
-
-Recent Feedback:
-${recentFeedback
-  .map((f, i) => `  ${i + 1}. Rating: ${f.rating}, Responses: ${f.responses}`)
-  .join("\n")}
-
-Give a short and precise (max 3 sentences, 30 words) performance insight with key observations and actionable suggestions for the employee.
-  `;
+### 2. Improvement Suggestions (Max 1 sentence, action-oriented):
+Give one constructive suggestion the employee can focus on to improve next month.
+`;
 
   const aiInsights = await analyzePerformance(prompt);
 
-  res.json({ data, aiInsights });
+  res.json({ success: true, data, aiInsights });
 };
