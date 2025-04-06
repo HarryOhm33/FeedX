@@ -1,33 +1,34 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
+import NotFound from "./components/NotFound";
 import ProtectedAuth from "./components/ProtectedAuth";
 import ProtectedRoute from "./components/ProtectedRoute";
+import WhyFeedX from "./components/WhyFeedx";
 import { AuthProvider } from "./context/AuthContext";
 import EmployeeLayout from "./layouts/EmployeeLayout";
 import HRLayout from "./layouts/HRLayout";
 import ManagerLayout from "./layouts/ManagerLayout";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import VerifyOtp from "./pages/VerifyOTP";
+import Techdocx from "./pages/Docs";
 import EmployeeDashboard from "./pages/employee/employeeDashboard";
+import FeedbackRequests from "./pages/employee/FeedbackRequests";
+import GoalE from "./pages/employee/GoalE";
+import Home from "./pages/Home";
 import Employee from "./pages/hr/Employee";
+import EmployeeDetail from "./pages/hr/EmployeeDetail";
+import Feedback from "./pages/hr/FeedBack";
 import HRDashboard from "./pages/hr/HRDashboard";
 import Manager from "./pages/hr/Manager";
-import ManagerDashboard from "./pages/manager/managerDashboard";
-import NotFound from "./components/NotFound";
-import EmployeeDetail from "./pages/hr/EmployeeDetail";
 import ManagerDetail from "./pages/hr/ManagerDetail";
-import FeedbackRequests from "./pages/employee/FeedbackRequests";
-import ManagerFeedbackRequests from "./pages/manager/ManagerFeedBackReq";
-import Feedback from "./pages/hr/FeedBack";
-import EmployeeM from "./pages/manager/EmployeeM";
+import Login from "./pages/Login";
 import EmployeeDetailsM from "./pages/manager/EmployeeDetailsM";
+import EmployeeM from "./pages/manager/EmployeeM";
 import Goals from "./pages/manager/Goals";
-import GoalE from "./pages/employee/GoalE";
+import ManagerDashboard from "./pages/manager/managerDashboard";
+import ManagerFeedbackRequests from "./pages/manager/ManagerFeedBackReq";
 import ProfileSection from "./pages/ProfileSection";
-import Techdocx from "./pages/Docs";
+import Signup from "./pages/Signup";
+import VerifyOtp from "./pages/VerifyOTP";
 
 function App() {
   return (
@@ -90,8 +91,9 @@ function App() {
             </Route>
           </Route>
           <Route path="/docs" element={<Techdocx />} />
+          <Route path="/whyfeedx" element={<WhyFeedX />} />
+
           <Route path="*" element={<NotFound />} />
-          
         </Routes>
       </AuthProvider>
     </Router>
