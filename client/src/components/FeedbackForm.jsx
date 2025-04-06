@@ -46,9 +46,15 @@ const FeedbackForm = ({ targetId, onClose, onSubmitSuccess }) => {
   const calculateCompletion = () => {
     const totalQuestions =
       questions.objective.length + questions.subjective.length;
-    const answeredQuestions =
-      Object.keys(responses.objective).length +
-      Object.keys(responses.subjective).length;
+    let answeredQuestions = 0;
+
+    // Count answered objective questions
+    answeredQuestions += Object.keys(responses.objective).length;
+
+    // Count answered subjective questions (only if not empty)
+    answeredQuestions += Object.values(responses.subjective).filter(
+      (answer) => answer && answer.trim() !== ""
+    ).length;
 
     return totalQuestions > 0
       ? Math.round((answeredQuestions / totalQuestions) * 100)
@@ -76,6 +82,7 @@ const FeedbackForm = ({ targetId, onClose, onSubmitSuccess }) => {
   };
 
   const handleSubmit = async () => {
+    // Check if all objective questions are answered
     if (
       Object.keys(responses.objective).length !== questions.objective.length
     ) {
@@ -83,9 +90,14 @@ const FeedbackForm = ({ targetId, onClose, onSubmitSuccess }) => {
       return;
     }
 
-    if (
-      Object.keys(responses.subjective).length !== questions.subjective.length
-    ) {
+    // Check if all subjective questions are answered (non-empty)
+    const allSubjectiveAnswered = questions.subjective.every(
+      (question) =>
+        responses.subjective[question] &&
+        responses.subjective[question].trim() !== ""
+    );
+
+    if (!allSubjectiveAnswered) {
       toast.error("Please answer all subjective questions");
       return;
     }
@@ -121,11 +133,11 @@ const FeedbackForm = ({ targetId, onClose, onSubmitSuccess }) => {
   // Color mapping for each rating
   const getRatingColor = (rating, selectedRating) => {
     const baseColors = {
-      1: "bg-red-500", // Strongly Disagree - Red
-      2: "bg-orange-500", // Disagree - Orange
-      3: "bg-yellow-500", // Neutral - Yellow
-      4: "bg-blue-500", // Agree - Blue
-      5: "bg-green-500", // Strongly Agree - Green
+      1: "bg-red-500",
+      2: "bg-orange-500",
+      3: "bg-yellow-500",
+      4: "bg-blue-500",
+      5: "bg-green-500",
     };
 
     const isSelected = selectedRating === rating;
@@ -147,7 +159,7 @@ const FeedbackForm = ({ targetId, onClose, onSubmitSuccess }) => {
   const completionPercentage = calculateCompletion();
 
   return (
-    <div className="fixed inset-0 bg-transparent bg-opacity-30 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-opacity-30 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
         {/* Progress Bar */}
         <div className="w-full bg-gray-200 h-2.5 sticky top-0 z-10">
@@ -246,9 +258,15 @@ const FeedbackForm = ({ targetId, onClose, onSubmitSuccess }) => {
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-all"
                         rows={4}
                         value={responses.subjective[question] || ""}
-                        onChange={(e) =>
-                          handleSubjectiveResponse(question, e.target.value)
-                        }
+                        onChange={(e) => {
+                          handleSubjectiveResponse(question, e.target.value);
+                        }}
+                        onBlur={(e) => {
+                          if (e.target.value.trim() === "") {
+                            // Clear the response if empty
+                            handleSubjectiveResponse(question, "");
+                          }
+                        }}
                         placeholder="Type your response here..."
                       />
                     </div>

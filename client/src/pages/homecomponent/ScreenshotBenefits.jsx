@@ -1,6 +1,7 @@
 import React from "react";
 import Button from "./Button";
 import CheckItem from "./CheckItem";
+import image from "../../assets/image.png";
 
 const ScreenshotBenefits = () => {
   return (
@@ -11,7 +12,7 @@ const ScreenshotBenefits = () => {
             <div className="bg-orange-200 w-full h-full absolute -top-4 -left-4 rounded-lg"></div>
             <div className="relative z-10 bg-white p-4 rounded-lg shadow-xl">
               <img
-                src="/api/placeholder/800/600"
+                src={image}
                 alt="Dashboard Screenshot"
                 className="rounded w-full"
               />
