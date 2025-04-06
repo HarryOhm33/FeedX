@@ -1,4 +1,12 @@
-import { FileText, Home, LogOut, Menu, MessageSquare, X } from "lucide-react";
+import {
+  FileText,
+  Home,
+  LogOut,
+  Menu,
+  MessageSquare,
+  X,
+  FileQuestion,
+} from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../assets/logo.svg";
@@ -52,7 +60,7 @@ const Navbar = () => {
         <div className="hidden lg:flex space-x-10 items-center">
           <NavLink to="/" label="Home" icon={<Home />} />
           <NavLink to="/docs" label="Docs" icon={<FileText />} />
-          <NavLink to="/feedback" label="Feedback" icon={<MessageSquare />} />
+          <NavLink to="/whyfeedx" label="Why FeedX" icon={<FileQuestion />} />
         </div>
 
         {/* Desktop Auth Section */}
