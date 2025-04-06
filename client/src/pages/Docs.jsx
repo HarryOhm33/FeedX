@@ -118,7 +118,7 @@ VITE_API_KEY="YOUR_VITE_API_KEY"`;
                       <div className="flex items-center">
                         <div className="text-lg mr-2">🎨</div>
                         <div>
-                          <div className="font-medium text-gray-900">Frontend: React.js, Redux, Chart.js</div>
+                          <div className="font-medium text-gray-900">Frontend: React.js, Redux, Chart.js,Tailwind Css</div>
                         </div>
                       </div>
                     </td>
@@ -221,6 +221,14 @@ VITE_API_KEY="YOUR_VITE_API_KEY"`;
                 <li className="flex items-start">
                   <span className="text-teal-500 mr-2">•</span>
                   <span className="text-gray-700"><strong>360° Feedback:</strong> Multi-directional evaluations.</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-teal-500 mr-2">•</span>
+                  <span className="text-gray-700"><strong>Auto-Feedback Triggers:</strong> Set days between automatic feedback requests</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-teal-500 mr-2">•</span>
+                  <span className="text-gray-700"><strong>Manually-Feedback Triggers:</strong> Send feedback request manually to the person you want to send it to.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-teal-500 mr-2">•</span>
@@ -451,11 +459,11 @@ VITE_API_KEY="YOUR_VITE_API_KEY"`;
         <ul className="space-y-3">
           <li className="flex items-start">
             <span className="text-teal-500 mr-2">•</span>
-            <span className="text-gray-700"><strong>Frontend</strong> -- Vercel for React deployment</span>
+            <span className="text-gray-700"><strong>Frontend</strong> --Netlify for frontend deployment</span>
           </li>
           <li className="flex items-start">
             <span className="text-teal-500 mr-2">•</span>
-            <span className="text-gray-700"><strong>Backend</strong> -- AWS Elastic Beanstalk</span>
+            <span className="text-gray-700"><strong>Backend</strong> -- Render for backend deployment</span>
           </li>
           <li className="flex items-start">
             <span className="text-teal-500 mr-2">•</span>
@@ -549,7 +557,7 @@ VITE_API_KEY="YOUR_VITE_API_KEY"`;
               </li>
               <li className="flex items-center">
                 <span className="bg-teal-100 text-teal-800 rounded-full w-6 h-6 flex items-center justify-center mr-2">4</span>
-                <span className="font-medium text-gray-700">Rohit Kumari</span>
+                <span className="font-medium text-gray-700">Rohit Kumar</span>
               </li>
               <li className="flex items-center">
                 <span className="bg-teal-100 text-teal-800 rounded-full w-6 h-6 flex items-center justify-center mr-2">5</span>
