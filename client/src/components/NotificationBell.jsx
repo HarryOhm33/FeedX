@@ -20,7 +20,7 @@ const NotificationBell = () => {
         if (!token || !user?._id) return;
 
         const response = await axios.get(
-          `http://localhost:8001/api/notif/${user._id}`,
+          `https://feedx-y6pk.onrender.com/api/notif/${user._id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -50,9 +50,12 @@ const NotificationBell = () => {
       const token = Cookies.get("markAuth");
       if (!token) return;
 
-      await axios.delete(`http://localhost:8001/api/notif/${notificationId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `https://feedx-y6pk.onrender.com/api/notif/${notificationId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       setNotifications((prev) =>
         prev.filter((notification) => notification._id !== notificationId)

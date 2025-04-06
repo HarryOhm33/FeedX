@@ -25,7 +25,7 @@ const TriggerFeedback = ({ employeeId, onClose }) => {
       }
 
       await axios.post(
-        "http://localhost:8001/api/feedback/trigger",
+        "https://feedx-y6pk.onrender.com/api/feedback/trigger",
         {
           targetId: employeeId,
           sessionName: sessionName,

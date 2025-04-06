@@ -36,7 +36,7 @@ const HRDashboard = () => {
         if (!token) throw new Error("No authentication token found!");
 
         const response = await axios.get(
-          "http://localhost:8001/api/hr/dashboard",
+          "https://feedx-y6pk.onrender.com/api/hr/dashboard",
           {
             withCredentials: true,
             headers: { Authorization: `Bearer ${token}` },

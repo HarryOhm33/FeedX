@@ -26,7 +26,7 @@ const Manager = () => {
         }
 
         const response = await axios.get(
-          "http://localhost:8001/api/hr/manager-list",
+          "https://feedx-y6pk.onrender.com/api/hr/manager-list",
           {
             withCredentials: true,
             headers: {

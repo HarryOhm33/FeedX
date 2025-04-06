@@ -36,7 +36,7 @@ const EmployeeDetailsM = () => {
         }
 
         const response = await axios.get(
-          "http://localhost:8001/api/manager/get-employees",
+          "https://feedx-y6pk.onrender.com/api/manager/get-employees",
           {
             withCredentials: true,
             headers: {
@@ -73,7 +73,7 @@ const EmployeeDetailsM = () => {
         if (!token) return;
 
         const response = await axios.get(
-          `http://localhost:8001/api/goal/manager/goals/${id}`,
+          `https://feedx-y6pk.onrender.com/api/goal/manager/goals/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -116,7 +116,7 @@ const EmployeeDetailsM = () => {
     try {
       const token = Cookies.get("markAuth");
       const response = await axios.post(
-        "http://localhost:8001/api/goal/create",
+        "https://feedx-y6pk.onrender.com/api/goal/create",
         {
           ...goalForm,
           employeeId: id,
@@ -134,7 +134,7 @@ const EmployeeDetailsM = () => {
 
       // Refresh goals
       const goalsResponse = await axios.get(
-        `http://localhost:8001/api/goal/manager/goals/${id}`,
+        `https://feedx-y6pk.onrender.com/api/goal/manager/goals/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -163,7 +163,7 @@ const EmployeeDetailsM = () => {
     try {
       const token = Cookies.get("markAuth");
       await axios.put(
-        `http://localhost:8001/api/goal/${goalId}/approve`,
+        `https://feedx-y6pk.onrender.com/api/goal/${goalId}/approve`,
         {},
         {
           headers: {
@@ -176,7 +176,7 @@ const EmployeeDetailsM = () => {
 
       // Refresh goals
       const response = await axios.get(
-        `http://localhost:8001/api/goal/manager/goals/${id}`,
+        `https://feedx-y6pk.onrender.com/api/goal/manager/goals/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

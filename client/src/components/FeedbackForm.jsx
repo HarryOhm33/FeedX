@@ -22,7 +22,7 @@ const FeedbackForm = ({ targetId, onClose, onSubmitSuccess }) => {
       try {
         const token = Cookies.get("markAuth");
         const response = await axios.get(
-          `http://localhost:8001/api/feedback/form/${targetId}`,
+          `https://feedx-y6pk.onrender.com/api/feedback/form/${targetId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -116,9 +116,13 @@ const FeedbackForm = ({ targetId, onClose, onSubmitSuccess }) => {
         roleRelation,
       };
 
-      await axios.post("http://localhost:8001/api/feedback/submit", payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.post(
+        "https://feedx-y6pk.onrender.com/api/feedback/submit",
+        payload,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       toast.success("Feedback submitted successfully");
       onSubmitSuccess();

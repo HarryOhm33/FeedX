@@ -31,7 +31,7 @@ const EmployeeDetail = () => {
         }
 
         const response = await axios.get(
-          "http://localhost:8001/api/hr/employee-list",
+          "https://feedx-y6pk.onrender.com/api/hr/employee-list",
           {
             withCredentials: true,
             headers: {
@@ -66,7 +66,7 @@ const EmployeeDetail = () => {
         if (!token) return;
 
         const response = await axios.get(
-          `http://localhost:8001/api/feedback/sessions/${id}`,
+          `https://feedx-y6pk.onrender.com/api/feedback/sessions/${id}`,
           {
             withCredentials: true,
             headers: {
@@ -126,7 +126,7 @@ const EmployeeDetail = () => {
       }
 
       await axios.put(
-        `http://localhost:8001/api/hr/toggle-auto-feedback/${id}`,
+        `https://feedx-y6pk.onrender.com/api/hr/toggle-auto-feedback/${id}`,
         { enable },
         {
           withCredentials: true,

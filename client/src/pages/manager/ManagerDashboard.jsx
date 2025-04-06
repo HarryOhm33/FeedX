@@ -44,7 +44,7 @@ const ManagerDashboard = () => {
         }
 
         const response = await axios.get(
-          "http://localhost:8001/api/manager/dashboard",
+          "https://feedx-y6pk.onrender.com/api/manager/dashboard",
           {
             withCredentials: true,
             headers: { Authorization: `Bearer ${token}` },

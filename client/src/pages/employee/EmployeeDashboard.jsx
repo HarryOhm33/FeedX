@@ -43,7 +43,7 @@ const EmployeeDashboard = () => {
         }
 
         const response = await axios.get(
-          "http://localhost:8001/api/employee/dashboard",
+          "https://feedx-y6pk.onrender.com/api/employee/dashboard",
           {
             withCredentials: true,
             headers: {

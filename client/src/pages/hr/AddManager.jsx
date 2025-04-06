@@ -34,13 +34,17 @@ const AddManager = ({ onClose }) => {
         organisationId: user.organisationId,
       };
 
-      await axios.post("http://localhost:8001/api/hr/create-user", payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
+      await axios.post(
+        "https://feedx-y6pk.onrender.com/api/hr/create-user",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
 
       toast.success("Manager added successfully!");
       onClose();

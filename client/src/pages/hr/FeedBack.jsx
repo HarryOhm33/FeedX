@@ -22,7 +22,7 @@ const Feedback = () => {
         }
 
         const response = await axios.get(
-          `http://localhost:8001/api/feedback/responses/${feedbackRequestId}`,
+          `https://feedx-y6pk.onrender.com/api/feedback/responses/${feedbackRequestId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

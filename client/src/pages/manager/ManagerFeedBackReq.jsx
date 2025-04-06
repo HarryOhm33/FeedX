@@ -27,7 +27,7 @@ const ManagerFeedbackRequests = () => {
         }
 
         const response = await axios.get(
-          "http://localhost:8001/api/feedback/requests",
+          "https://feedx-y6pk.onrender.com/api/feedback/requests",
           {
             withCredentials: true,
             headers: {
@@ -78,7 +78,7 @@ const ManagerFeedbackRequests = () => {
     setLoading(true);
     const token = Cookies.get("markAuth");
     axios
-      .get("http://localhost:8001/api/feedback/requests", {
+      .get("https://feedx-y6pk.onrender.com/api/feedback/requests", {
         withCredentials: true,
         headers: {
           Authorization: `Bearer ${token}`,

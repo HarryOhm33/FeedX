@@ -31,7 +31,7 @@ const ManagerDetail = () => {
         }
 
         const response = await axios.get(
-          "http://localhost:8001/api/hr/manager-list",
+          "https://feedx-y6pk.onrender.com/api/hr/manager-list",
           {
             withCredentials: true,
             headers: {
@@ -65,7 +65,7 @@ const ManagerDetail = () => {
         setSessionsLoading(true);
         const token = Cookies.get("markAuth");
         const response = await axios.get(
-          `http://localhost:8001/api/feedback/sessions/${id}`,
+          `https://feedx-y6pk.onrender.com/api/feedback/sessions/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -112,7 +112,7 @@ const ManagerDetail = () => {
       }
 
       await axios.put(
-        `http://localhost:8001/api/hr/toggle-auto-feedback/${id}`,
+        `https://feedx-y6pk.onrender.com/api/hr/toggle-auto-feedback/${id}`,
         { enable },
         {
           withCredentials: true,

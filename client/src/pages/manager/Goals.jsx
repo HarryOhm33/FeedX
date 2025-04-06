@@ -24,7 +24,7 @@ const Goals = () => {
         }
 
         const response = await axios.get(
-          "http://localhost:8001/api/goal/manager/goals",
+          "https://feedx-y6pk.onrender.com/api/goal/manager/goals",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -58,7 +58,7 @@ const Goals = () => {
     try {
       const token = Cookies.get("markAuth");
       await axios.put(
-        `http://localhost:8001/api/goal/${goalId}/approve`,
+        `https://feedx-y6pk.onrender.com/api/goal/${goalId}/approve`,
         {},
         {
           headers: {
@@ -71,7 +71,7 @@ const Goals = () => {
 
       // Refresh goals
       const response = await axios.get(
-        "http://localhost:8001/api/goal/manager/goals",
+        "https://feedx-y6pk.onrender.com/api/goal/manager/goals",
         {
           headers: {
             Authorization: `Bearer ${token}`,

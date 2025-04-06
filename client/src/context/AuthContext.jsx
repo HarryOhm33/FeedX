@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         axios
           .post(
-            "http://localhost:8001/api/auth/verify-session",
+            "https://feedx-y6pk.onrender.com/api/auth/verify-session",
             {},
             {
               headers: { Authorization: `Bearer ${token}` },
@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }) => {
       };
 
       const res = await axios.post(
-        "http://localhost:8001/api/auth/signup",
+        "https://feedx-y6pk.onrender.com/api/auth/signup",
         signupData,
         { withCredentials: true }
       );
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }) => {
   const verifyOtp = async (otp) => {
     try {
       const res = await axios.post(
-        "http://localhost:8001/api/auth/verify-otp",
+        "https://feedx-y6pk.onrender.com/api/auth/verify-otp",
         { email, otp },
         { withCredentials: true }
       );
@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }) => {
   const resendOtp = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:8001/api/auth/resend-otp",
+        "https://feedx-y6pk.onrender.com/api/auth/resend-otp",
         { email },
         { withCredentials: true }
       );
@@ -109,7 +109,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const res = await axios.post(
-        "http://localhost:8001/api/auth/login",
+        "https://feedx-y6pk.onrender.com/api/auth/login",
         { email, password },
         { withCredentials: true }
       );
@@ -142,7 +142,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const token = Cookies.get("markAuth");
       await axios.post(
-        "http://localhost:8001/api/auth/logout",
+        "https://feedx-y6pk.onrender.com/api/auth/logout",
         {},
         {
           headers: { Authorization: `Bearer ${token}` },

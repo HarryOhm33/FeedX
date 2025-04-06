@@ -23,11 +23,14 @@ const GoalE = () => {
           return;
         }
 
-        const response = await axios.get("http://localhost:8001/api/goal/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          "https://feedx-y6pk.onrender.com/api/goal/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         const sortedGoals = {
           Pending: [],
@@ -55,7 +58,7 @@ const GoalE = () => {
     try {
       const token = Cookies.get("markAuth");
       await axios.put(
-        `http://localhost:8001/api/goal/${goalId}/request-completion`,
+        `https://feedx-y6pk.onrender.com/api/goal/${goalId}/request-completion`,
         {},
         {
           headers: {
@@ -67,11 +70,14 @@ const GoalE = () => {
       toast.success("Completion request submitted successfully");
 
       // Refresh goals
-      const response = await axios.get("http://localhost:8001/api/goal/", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        "https://feedx-y6pk.onrender.com/api/goal/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const sortedGoals = {
         Pending: [],

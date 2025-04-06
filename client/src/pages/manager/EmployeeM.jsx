@@ -24,7 +24,7 @@ const EmployeeM = () => {
         }
 
         const response = await axios.get(
-          "http://localhost:8001/api/manager/get-employees",
+          "https://feedx-y6pk.onrender.com/api/manager/get-employees",
           {
             withCredentials: true,
             headers: {
